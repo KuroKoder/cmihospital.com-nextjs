@@ -29,7 +29,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         </div>
       )}
 
-      <Link href={`/artikel/${article.slug}`} className="block">
+      <Link href={`/artikel-kesehatan/${article.slug}`} className="block">
         <div className="relative h-48 overflow-hidden">
           <img
             src={article.image || "/api/placeholder/600/400"}

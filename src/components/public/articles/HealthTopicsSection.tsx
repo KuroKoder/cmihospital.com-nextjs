@@ -25,7 +25,7 @@ const HealthTopicsSection: React.FC = () => {
         {topicsWithCounts.map((category) => (
           <Link
             key={category.id}
-            href={`/artikel/kategori/${category.id}`}
+            href={`/artikel-kesehatan/kategori/${category.id}`}
             className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition flex flex-col items-center justify-center text-center gap-2 group"
           >
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-2 group-hover:bg-green-200 transition-colors">

@@ -11,15 +11,18 @@ import ClinicExterior from "../../../../public/images/hero/Gedungcmi.jpg";
 import ModalsKonsultasi from "../../ui/modal-konsultasi";
 
 // Tipe data untuk banner
+import { StaticImageData } from "next/image";
+
 interface Banner {
   id: number;
   title: string;
   subtitle: string;
   description: string;
-  image: any; // Idealnya StaticImageData untuk type safety yang lebih baik
+  image: StaticImageData;
   ctaPrimary: string;
   ctaSecondary: string;
 }
+
 
 const Hero = () => {
   const [formData, setFormData] = useState({

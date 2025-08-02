@@ -239,7 +239,7 @@ export default function FacilitiesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="font-sans pt-25">
+    <div className="font-sans mt-34">
       {/* Hero Section */}
       <section className="bg-green-700 text-white py-15">
         <div className="container flex mx-auto px-4 items-center">
@@ -503,7 +503,8 @@ export default function FacilitiesPage() {
                       </p>
                     </div>
                   </div>
-                  <p className="text-gray-600 italic">"{testimonial.text}"</p>
+                  <p className="text-gray-600 italic">&ldquo;{testimonial.text}&rdquo;</p>
+
                 </div>
               ))}
             </div>

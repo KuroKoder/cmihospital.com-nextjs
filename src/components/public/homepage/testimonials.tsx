@@ -262,9 +262,10 @@ export default function PatientTestimonialSection() {
                   {/* Story */}
                   <blockquote className="mb-6">
                     <p className="text-slate-700 leading-relaxed text-base italic">
-                      "{testimonial.story}"
+                      &ldquo;{testimonial.story}&rdquo;
                     </p>
                   </blockquote>
+
 
                   {/* Before/After */}
                   <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">

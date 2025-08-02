@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { BookmarkIcon, ArrowLongRightIcon } from "@heroicons/react/24/outline";
+import { 
+  BookmarkIcon, 
+  ArrowLongRightIcon,
+  EyeIcon,
+  FireIcon,
+  StarIcon
+} from "@heroicons/react/24/outline";
+import { 
+  EyeIcon as EyeSolidIcon,
+  FireIcon as FireSolidIcon 
+} from "@heroicons/react/24/solid";
 import Link from "next/link";
 import Head from "next/head";
 import MainLayout from "../../../components/layout/main-layout";
@@ -12,7 +22,6 @@ import FilterControls from "../../../components/public/articles/FilterControls";
 import ArticleCard from "../../../components/public/articles/ArticleCard";
 import Pagination from "../../../components/public/articles/Pagination";
 import NewsletterSection from "../../../components/public/articles/NewsletterSection";
-import HealthTopicsSection from "../../../components/public/articles/HealthTopicsSection";
 
 // Import data and types
 import { CATEGORIES, ARTICLES } from "../../../data/articles";
@@ -24,6 +33,137 @@ import {
 } from "../../../utils/articleUtils";
 
 const ARTICLES_PER_PAGE = 6;
+
+// Component untuk Popular Article Card
+const PopularArticleCard: React.FC<{
+  article: Article;
+  rank: number;
+  categories: typeof CATEGORIES;
+}> = ({ article, rank, categories }) => {
+  const categoryName = categories.find((cat) => cat.id === article.category)?.name || "Artikel";
+  
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const getRankStyle = (rank: number) => {
+    switch (rank) {
+      case 1:
+        return "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white";
+      case 2:
+        return "bg-gradient-to-r from-gray-300 to-gray-500 text-white";
+      case 3:
+        return "bg-gradient-to-r from-amber-600 to-amber-800 text-white";
+      default:
+        return "bg-gradient-to-r from-green-500 to-green-600 text-white";
+    }
+  };
+
+  const getRankIcon = (rank: number) => {
+    if (rank <= 3) {
+      return <StarIcon className="h-4 w-4" />;
+    }
+    return <FireIcon className="h-4 w-4" />;
+  };
+
+  return (
+    <Link href={`/artikel-kesehatan/${article.slug}`} className="group block">
+      <article className="relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+        {/* Rank Badge */}
+        <div className="absolute top-4 left-4 z-20">
+          <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-bold shadow-lg ${getRankStyle(rank)}`}>
+            {getRankIcon(rank)}
+            <span>#{rank}</span>
+          </div>
+        </div>
+
+        {/* Popular Badge */}
+        <div className="absolute top-4 right-4 z-20">
+          <div className="flex items-center gap-1 px-2.5 py-1 bg-red-500 text-white rounded-full text-xs font-semibold shadow-lg animate-pulse">
+            <FireSolidIcon className="h-3 w-3" />
+            <span>Popular</span>
+          </div>
+        </div>
+
+        {/* Image Container */}
+        <div className="relative h-56 overflow-hidden">
+          <img
+            src={article.image || "/api/placeholder/600/400"}
+            alt={article.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+          
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+          
+          {/* Category Badge on Image */}
+          <div className="absolute bottom-4 left-4">
+            <span className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-green-800 text-sm font-semibold rounded-full shadow-lg">
+              {categoryName}
+            </span>
+          </div>
+
+          {/* Views Counter on Image */}
+          <div className="absolute bottom-4 right-4">
+            <div className="flex items-center gap-1 px-3 py-1.5 bg-black/60 backdrop-blur-sm text-white rounded-full text-sm font-medium">
+              <EyeSolidIcon className="h-4 w-4" />
+              <span>{article.views.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {/* Title */}
+          <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-green-600 transition-colors duration-200 leading-tight">
+            {article.title}
+          </h3>
+
+          {/* Description */}
+          <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+            {article.description}
+          </p>
+
+          {/* Meta Information */}
+          <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+            <div className="flex items-center gap-3">
+              <span className="font-medium text-gray-700">{article.author}</span>
+              <span>•</span>
+              <span>{formatDate(article.date)}</span>
+            </div>
+            <span className="bg-gray-100 px-2 py-1 rounded-full text-xs font-medium">
+              {article.readTime}
+            </span>
+          </div>
+
+          {/* Action Row */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            {/* Views with trend indicator */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-gray-600">
+                <FireIcon className="h-4 w-4 text-green-500" />
+                <span className="text-sm font-medium">{article.views.toLocaleString()} views</span>
+              </div>
+            </div>
+
+            {/* Read More */}
+            <div className="flex items-center text-green-600 font-semibold group-hover:text-green-700 transition-colors">
+              <span className="text-sm">Baca Artikel</span>
+              <ArrowLongRightIcon className="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" />
+            </div>
+          </div>
+        </div>
+
+        {/* Hover Effect Border */}
+        <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-green-200 transition-colors duration-300 pointer-events-none"></div>
+      </article>
+    </Link>
+  );
+};
 
 const ArtikelKesehatan: React.FC = () => {
   const [filterState, setFilterState] = useState<FilterState>({
@@ -47,6 +187,13 @@ const ArtikelKesehatan: React.FC = () => {
     filterState.searchQuery,
     filterState.sortBy,
   ]);
+
+  // Memoized popular articles - diurutkan berdasarkan views
+  const popularArticles = useMemo(() => {
+    return [...ARTICLES]
+      .sort((a, b) => b.views - a.views)
+      .slice(0, 6); // Ambil 6 artikel terpopuler
+  }, []);
 
   // Reset halaman ke 1 ketika filter berubah
   useEffect(() => {
@@ -99,7 +246,6 @@ const ArtikelKesehatan: React.FC = () => {
 
   const handlePageChange = useCallback((pageNumber: number) => {
     setFilterState((prev) => ({ ...prev, currentPage: pageNumber }));
-    // Scroll ke section artikel dengan delay kecil untuk smooth experience
     setTimeout(() => {
       scrollToElement("articles-section");
     }, 100);
@@ -181,7 +327,48 @@ const ArtikelKesehatan: React.FC = () => {
         />
 
         <div className="container mx-auto px-4">
-          {/* Featured Articles Section */}
+          {/* Popular Articles Section - Enhanced */}
+          {shouldShowFeaturedArticles && popularArticles.length > 0 && (
+            <section
+              className="mb-16"
+              aria-labelledby="popular-articles-title"
+            >
+              {/* Section Header */}
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-full mb-4">
+                  <FireSolidIcon className="h-5 w-5 text-red-500" />
+                  <span className="text-red-600 font-semibold text-sm">Trending Sekarang</span>
+                </div>
+                
+                <h2
+                  id="popular-articles-title"
+                  className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
+                >
+                  Artikel <span className="text-green-600">Terpopuler</span>
+                </h2>
+                
+                <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+                  Artikel kesehatan yang paling banyak dibaca dan dipercaya oleh ribuan pembaca kami
+                </p>
+              </div>
+
+              {/* Popular Articles Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {popularArticles.map((article, index) => (
+                  <PopularArticleCard
+                    key={article.id}
+                    article={article}
+                    rank={index + 1}
+                    categories={CATEGORIES}
+                  />
+                ))}
+              </div>
+
+          
+            </section>
+          )}
+
+          {/* Featured Articles Section
           {shouldShowFeaturedArticles && featuredArticles.length > 0 && (
             <section
               className="mb-12"
@@ -194,17 +381,6 @@ const ArtikelKesehatan: React.FC = () => {
                 >
                   Artikel Unggulan
                 </h2>
-                <Link
-                  href="/artikel/featured"
-                  className="text-green-600 hover:text-green-800 flex items-center transition-colors duration-200"
-                  aria-label="Lihat semua artikel unggulan"
-                >
-                  <span>Lihat Semua</span>
-                  <ArrowLongRightIcon
-                    className="h-5 w-5 ml-1"
-                    aria-hidden="true"
-                  />
-                </Link>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -218,7 +394,7 @@ const ArtikelKesehatan: React.FC = () => {
                 ))}
               </div>
             </section>
-          )}
+          )} */}
 
           {/* Filter Controls */}
           <FilterControls
@@ -297,8 +473,6 @@ const ArtikelKesehatan: React.FC = () => {
                     currentPage={filterState.currentPage}
                     totalPages={paginationData.totalPages}
                     onPageChange={handlePageChange}
-                    // totalItems={filteredArticles.length}
-                    // itemsPerPage={ARTICLES_PER_PAGE}
                   />
                 )}
               </>
@@ -307,9 +481,6 @@ const ArtikelKesehatan: React.FC = () => {
 
           {/* Newsletter Signup */}
           <NewsletterSection />
-
-          {/* Related Health Topics */}
-          <HealthTopicsSection />
         </div>
       </main>
     </MainLayout>

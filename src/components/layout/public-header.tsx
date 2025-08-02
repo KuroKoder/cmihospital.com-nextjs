@@ -52,6 +52,7 @@ import type {
   MapPinIcon as MapPinIconType,
   ClockIcon as ClockIconType,
 } from "@heroicons/react/20/solid";
+import Link from "next/link";
 
 interface LayananKesehatanItem {
   name: string;
@@ -171,7 +172,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center">
+            <Link href="/" className="flex items-center">
               <Image
                 src={Logo}
                 alt="Klinik Utama CMI"
@@ -183,7 +184,7 @@ export default function Navbar() {
               <span className="ml-3 text-lg font-bold text-emerald-900">
                 Klinik Utama CMI
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -304,7 +305,7 @@ export default function Navbar() {
           {/* Panel */}
           <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white p-6 overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <a href="/" className="flex items-center">
+              <Link href="/" className="flex items-center">
                 <Image
                   src={Logo}
                   alt="Klinik Utama CMI"
@@ -316,7 +317,7 @@ export default function Navbar() {
                 <span className="ml-2 text-base font-bold text-green-900">
                   Klinik Utama CMI
                 </span>
-              </a>
+              </Link>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}

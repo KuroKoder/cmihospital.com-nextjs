@@ -640,24 +640,6 @@ const LokasiKontakSection: React.FC = () => {
           <ContactForm />
         </div>
       </div>
-
-      {/* Emergency Contact */}
-      <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-6 rounded-xl text-center">
-        <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
-          <Phone className="w-5 h-5" />
-          Darurat 24 Jam
-        </h3>
-        <p className="text-red-100 mb-3">
-          Untuk keadaan darurat, hubungi langsung:
-        </p>
-        <a
-          href="tel:119"
-          className="inline-flex items-center gap-2 bg-white text-red-600 font-bold py-2 px-6 rounded-lg hover:bg-red-50 transition-colors"
-        >
-          <Phone className="w-4 h-4" />
-          119 - Ambulans
-        </a>
-      </div>
     </section>
   );
 };
