@@ -336,7 +336,7 @@ const TentangKami = () => {
                   {/* Uncomment and use this when you have the actual image */}
 
                   <Image
-                    src="/assets/images/cmi.webp"
+                    src="/images/hero/cmi.webp"
                     alt="Gedung Klinik CMI"
                     fill
                     className="object-cover"

@@ -17,7 +17,7 @@ export default function HealthArticlesSection() {
       excerpt:
         "Temukan tips sederhana untuk menjaga kesehatan jantung Anda setiap hari.",
       category: "jantung",
-      image: "/assets/images/artikel-terbaru/kesehatan-jantung.png",
+      image: "/images/articles/homepage/kesehatan-jantung.png",
       author: "dr. Anita Setiawan",
       date: "28 Apr 2025",
       readTime: "5 menit",
@@ -29,7 +29,7 @@ export default function HealthArticlesSection() {
       excerpt:
         "Makanan apa saja yang dapat meningkatkan daya tahan tubuh secara alami.",
       category: "nutrisi",
-      image: "/assets/images/artikel-terbaru/nutrisi-penting.png",
+      image: "/images/articles/homepage/nutrisi-penting.png",
       author: "dr. Budi Santoso",
       date: "26 Apr 2025",
       readTime: "4 menit",
@@ -41,7 +41,7 @@ export default function HealthArticlesSection() {
       excerpt:
         "Hubungan antara aktivitas fisik dan kesejahteraan mental yang sering terabaikan.",
       category: "mental",
-      image: "/assets/images/artikel-terbaru/olahraga-rutin.png",
+      image: "/images/articles/homepage/olahraga-rutin.png",
       author: "dr. Citra Dewi",
       date: "24 Apr 2025",
       readTime: "6 menit",
@@ -53,7 +53,7 @@ export default function HealthArticlesSection() {
       excerpt:
         "Pola tidur yang baik untuk meningkatkan kesehatan dan produktivitas Anda.",
       category: "gaya-hidup",
-      image: "/assets/images/artikel-terbaru/tidur-berkualitas.png",
+      image: "/images/articles/homepage/tidur-berkualitas.png",
       author: "dr. Dian Pratama",
       date: "22 Apr 2025",
       readTime: "5 menit",
@@ -65,7 +65,7 @@ export default function HealthArticlesSection() {
       excerpt:
         "Kenali tanda-tanda awal diabetes untuk penanganan yang lebih efektif.",
       category: "penyakit",
-      image: "/assets/images/artikel-terbaru/deteksi-diabetes.png",
+      image: "/images/articles/homepage/deteksi-diabetes.png",
       author: "dr. Eko Pranoto",
       date: "20 Apr 2025",
       readTime: "7 menit",
@@ -76,7 +76,7 @@ export default function HealthArticlesSection() {
       title: "Menjaga Kesehatan Tulang dan Sendi di Usia Lanjut",
       excerpt: "Langkah-langkah mencegah osteoporosis dan masalah persendian.",
       category: "lansia",
-      image: "/api/placeholder/600/400",
+      image: "/images/articles/homepage/deteksi-diabetes.pngw",
       author: "dr. Farida Husna",
       date: "18 Apr 2025",
       readTime: "4 menit",

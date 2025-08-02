@@ -1,195 +1,351 @@
 "use client";
 import { useState } from "react";
-import ModalsKonsultasi from "../../ui/modal-konsultasi";
-
-// Assume image imports are handled correctly
+import { motion, Variants } from "framer-motion";
+import ModalsKonsultasi, { FormDataJadwal } from "../../ui/modal-konsultasi";
 import ClinicExterior from "../../../../public/images/services/diabetes.png";
+import Image from "next/image";
+import Button from "../../ui/button";
 
-const layanan = [
+// Define the Service type (removed icon)
+type Service = {
+  nama: string;
+  deskripsi: string;
+  image: typeof ClinicExterior;
+  features: string[];
+};
+
+const services: Service[] = [
   {
     nama: "Pengobatan Kanker",
     deskripsi:
-      "Terapi kanker tanpa tindakan invasif seperti kemoterapi atau operasi dengan pendekatan holistik dan teknologi modern.",
+      "Terapi kanker non-invasif dengan pendekatan holistik dan teknologi modern untuk hasil optimal.",
     image: ClinicExterior,
-    icon: "🩺",
     features: [
-      "Terapi non-invasif",
-      "Pendekatan holistik",
-      "Minim efek samping",
+      "Tindakan Non-invasif",
+      "Tanpa Kemoterapi",
+      "Tanpa Operasi",
+      "Minim Efek Samping",
+      "Tim Edukasi Profesional",
     ],
   },
   {
     nama: "Pengobatan Jantung",
     deskripsi:
-      "Penanganan penyakit jantung tanpa operasi pemasangan ring atau bypass melalui metode terapi terkini.",
+      "Penanganan penyakit jantung tanpa operasi melalui metode terapi terkini dan preventif.",
     image: ClinicExterior,
-    icon: "❤️",
     features: [
-      "Tanpa operasi bypass",
-      "Metode terapi terkini",
-      "Pendekatan preventif",
+      "Tanpa Pemasangan Ring",
+      "Tanpa Operasi Bypass",
+      "Terapi Terkini",
+      "Pendekatan Preventif",
+      "Tim Edukasi Profesional",
     ],
   },
   {
     nama: "Pengobatan Diabetes",
     deskripsi:
-      "Manajemen diabetes tanpa suntik insulin dan ketergantungan obat seumur hidup dengan pendekatan terintegrasi.",
+      "Manajemen diabetes terintegrasi tanpa ketergantungan insulin dan minum obat seumur hidup.",
     image: ClinicExterior,
-    icon: "🩸",
     features: [
-      "Manajemen nutrisi",
-      "Terapi terintegrasi",
-      "Pendekatan holistik",
+      "Manajemen Nutrisi",
+      "Terhindar dari minum obat seumur hidup",
+      "Tanpa suntik insulin",
+      "Tim Edukasi Profesional",
     ],
   },
   {
     nama: "Pengobatan Ginjal",
     deskripsi:
-      "Terapi gagal ginjal untuk mengurangi frekuensi cuci darah dan meningkatkan kualitas hidup pasien.",
+      "Terapi gagal ginjal untuk mengurangi frekuensi cuci darah dan tingkatkan kualitas hidup.",
     image: ClinicExterior,
-    icon: "💧",
     features: [
-      "Peningkatan kualitas hidup",
-      "Program preventif",
-      "Terapi farmakologis",
+      "Mengurangi Frekuensi Cuci Darah",
+      "Terhindar dari operasi",
+      "Tim Edukasi Profesional",
     ],
   },
   {
-    nama: "Laboratorium Avicena",
+    nama: "Laboratorium Avicenna",
     deskripsi:
-      "Fasilitas laboratorium modern untuk pemeriksaan diagnostik menyeluruh dengan teknologi tinggi dan akurasi tinggi.",
+      "Fasilitas diagnostik modern dengan teknologi tinggi untuk hasil cepat dan akurat.",
     image: ClinicExterior,
-    icon: "🔬",
-    features: [
-      "Diagnostik komprehensif",
-      "Teknologi modern",
-      "Hasil cepat dan akurat",
-    ],
+    features: ["Diagnostik Lengkap", "Teknologi Modern", "Hasil Akurat"],
   },
 ];
 
 const LayananUnggulan = () => {
-  const [activeTab, setActiveTab] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [initialFormData, setInitialFormData] = useState<
+    Partial<FormDataJadwal>
+  >({});
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % services.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + services.length) % services.length);
+  };
+
+  const openModal = (service: Service) => {
+    setSelectedService(service);
+    // Set the jenisKeluhan based on the selected service
+    let jenisKeluhanValue = "";
+
+    switch (service.nama) {
+      case "Pengobatan Kanker":
+        jenisKeluhanValue = "kanker";
+        break;
+      case "Pengobatan Jantung":
+        jenisKeluhanValue = "jantung";
+        break;
+      case "Pengobatan Diabetes":
+        jenisKeluhanValue = "diabetes";
+        break;
+      case "Pengobatan Ginjal":
+        jenisKeluhanValue = "ginjal";
+        break;
+      default:
+        jenisKeluhanValue = "umum";
+    }
+
+    setInitialFormData({
+      jenisKeluhan: jenisKeluhanValue,
+    });
+    setIsModalOpen(true);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: {
+      y: 50,
+      opacity: 0,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut", // Gunakan string easing yang valid
+      },
+    },
+  };
 
   return (
-    <section id="layanan" className="py-16 bg-white">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            Layanan Unggulan
-          </h2>
-          <p className="text-black max-w-2xl mx-auto">
-            Pendekatan holistik dengan teknologi modern untuk penanganan
-            penyakit kronis, memberikan kesembuhan dan kualitas hidup yang lebih
-            baik.
-          </p>
-        </div>
-
-        {/* Service Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {layanan.map((item, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveTab(idx)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === idx
-                  ? "bg-green-600 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              <span className="mr-2">{item.icon}</span>
-              {item.nama}
-            </button>
-          ))}
-        </div>
-
-        {/* Active Service Card */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="grid lg:grid-cols-2 gap-0">
-            {/* Image */}
-            <div className="relative">
-              <img
-                src={layanan[activeTab].image.src}
-                alt={layanan[activeTab].nama}
-                className="w-full h-64 lg:h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-            </div>
-
-            {/* Content */}
-            <div className="p-8">
-              <div className="flex items-center mb-4">
-                <span className="text-2xl mr-3">{layanan[activeTab].icon}</span>
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {layanan[activeTab].nama}
-                </h3>
-              </div>
-
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                {layanan[activeTab].deskripsi}
-              </p>
-
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  Fitur Utama:
-                </h4>
-                <ul className="space-y-2">
-                  {layanan[activeTab].features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center">
-                      <svg
-                        className="w-4 h-4 text-green-600 mr-3 flex-shrink-0"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span className="text-gray-600">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* CTA Button */}
-              <div className="mt-8">
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:cursor-pointer hover:bg-green-700 transition-colors"
-                >
-                  Konsultasi Sekarang
-                </button>
-                {isModalOpen && (
-                  <ModalsKonsultasi
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                  />
-                )}
-              </div>
-            </div>
+    <section className="relative py-10 min-h-screen overflow-hidden bg-gray-50">
+      <div className="relative z-10 container mx-auto px-4">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <div className="inline-block">
+            <span className="inline-block px-6 py-2 bg-emerald-500 text-white rounded-full text-sm font-medium mb-2 border border-emerald-400">
+              ✨ Layanan Terdepan
+            </span>
           </div>
-        </div>
 
-        {/* Dots Indicator */}
-        <div className="flex justify-center mt-6 space-x-2">
-          {layanan.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveTab(idx)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                activeTab === idx ? "bg-green-600" : "bg-gray-300"
-              }`}
-              aria-label={`Pilih layanan ${idx + 1}`}
-            />
-          ))}
-        </div>
+          <h2 className="text-4xl md:text-6xl font-bold text-gray-800 mb-6 leading-tight">
+            Layanan{" "}
+            <span className="bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">
+              Unggulan
+            </span>{" "}
+            Kami
+          </h2>
+
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            Memberikan pelayanan kesehatan terbaik dengan teknologi modern dan
+            tim profesional berpengalaman untuk kesembuhan optimal Anda.
+          </p>
+        </motion.div>
+
+        {/* Services Carousel */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="relative max-w-7xl mx-auto"
+        >
+          {/* Carousel Container */}
+          <div className="overflow-hidden rounded-3xl">
+            <motion.div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${
+                  currentSlide * (100 / services.length)
+                }%)`,
+                width: `${services.length * 100}%`,
+              }}
+            >
+              {services.map((service, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="relative group flex-shrink-0"
+                  style={{ width: `${100 / services.length}%` }}
+                >
+                  {/* Service Card with Image Background */}
+                  <div className="relative h-[600px] mx-4 rounded-2xl overflow-hidden shadow-2xl">
+                    {/* Background Image */}
+                    <div className="absolute inset-0">
+                      <Image
+                        src={service.image}
+                        alt={service.nama}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                      />
+                      {/* Improved Dark Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10"></div>
+                    </div>
+
+                    {/* Content Overlay */}
+                    <div className="relative h-full flex flex-col justify-end p-8 text-white">
+                      {/* Service Title */}
+                      <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+                        {service.nama}
+                      </h3>
+
+                      {/* Service Description */}
+                      <p className="text-lg text-white/90 mb-6 leading-relaxed max-w-md">
+                        {service.deskripsi}
+                      </p>
+
+                      {/* Features */}
+                      <div className="mb-8">
+                        <h4 className="font-semibold text-white/80 mb-4 text-sm uppercase tracking-wider">
+                          Pelayanan
+                        </h4>
+                        <div className="flex flex-wrap gap-3">
+                          {service.features.map((feature, i) => (
+                            <span
+                              key={i}
+                              className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium border border-white/20 hover:bg-white/20 transition-colors"
+                            >
+                              {feature}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* CTA Button */}
+                      <Button
+                        onClick={() => openModal(service)}
+                        variant="primary"
+                        size="lg"
+                        className="w-fit"
+                      >
+                        Konsultasi Sekarang
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Carousel Navigation */}
+          <div className="flex justify-center items-center mt-8 space-x-4">
+            {/* Previous Button */}
+            <motion.button
+              onClick={prevSlide}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 bg-emerald-100 rounded-full border border-emerald-200 text-emerald-600 hover:bg-emerald-200 transition-all duration-300 shadow-lg"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </motion.button>
+
+            {/* Dots Indicator */}
+            <div className="flex space-x-2">
+              {services.map((_, index) => (
+                <motion.button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  whileHover={{ scale: 1.1 }}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentSlide === index
+                      ? "bg-emerald-500 scale-125"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Next Button */}
+            <motion.button
+              onClick={nextSlide}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 bg-emerald-100 rounded-full border border-emerald-200 text-emerald-600 hover:bg-emerald-200 transition-all duration-300 shadow-lg"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Bottom decorative section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="text-center mt-0 md:mt-6"
+        >
+          <div className="inline-flex items-center space-x-2 px-6 py-3 bg-emerald-50 rounded-full border border-emerald-200">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            <span className="text-emerald-700 text-sm font-medium">
+              Lebih dari 10,000+ pasien telah merasakan kesembuhan
+            </span>
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+          </div>
+        </motion.div>
       </div>
+
+      {/* Modal */}
+      <ModalsKonsultasi
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialData={initialFormData}
+        title={`Konsultasi ${selectedService?.nama || "Kesehatan"}`}
+      />
     </section>
   );
 };
