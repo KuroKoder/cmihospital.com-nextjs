@@ -134,7 +134,7 @@ const TentangKami = () => {
           animate={controls}
           className="text-center mb-12 md:mb-16"
         >
-          <motion.span
+          {/* <motion.span
             className="inline-flex items-center py-2 px-4 rounded-full bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 text-sm font-semibold mb-4 shadow-sm border border-green-200"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -151,7 +151,7 @@ const TentangKami = () => {
               />
             </svg>
             Tentang Kami
-          </motion.span>
+          </motion.span> */}
           <motion.h2
             className="text-4xl md:text-3xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-green-800 to-emerald-800 bg-clip-text text-transparent mb-6"
             initial={{ opacity: 0, y: 20 }}

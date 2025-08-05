@@ -1,5 +1,5 @@
-import Navbar from "../layout/public-header";
-import Footer from "../layout/public-footer";
+import Navbar from "./public-header";
+import Footer from "./footer/public-footer";
 import { ReactNode } from "react";
 
 const MainLayout = ({ children }: { children: ReactNode }) => {

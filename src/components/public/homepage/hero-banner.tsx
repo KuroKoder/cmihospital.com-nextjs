@@ -60,7 +60,7 @@ const Hero = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const waNumber = "628119161166";
+    const waNumber = "628112222574";
     const message = `*Konsultasi Baru*\nNama: ${formData.name}\nTelepon: ${formData.phone}\nKeluhan: ${formData.condition}\nCatatan: ${formData.notes}`;
     const encodedMessage = encodeURIComponent(message);
     const waURL = `https://wa.me/${waNumber}?text=${encodedMessage}`;
@@ -78,7 +78,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-screen mt-[130px]">
+    <section className="relative min-h-screen mt-[70px]">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={0}

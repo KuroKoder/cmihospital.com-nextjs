@@ -73,21 +73,6 @@ const PopularArticleCard: React.FC<{
   return (
     <Link href={`/artikel-kesehatan/${article.slug}`} className="group block">
       <article className="relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
-        {/* Rank Badge */}
-        <div className="absolute top-4 left-4 z-20">
-          <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-bold shadow-lg ${getRankStyle(rank)}`}>
-            {getRankIcon(rank)}
-            <span>#{rank}</span>
-          </div>
-        </div>
-
-        {/* Popular Badge */}
-        <div className="absolute top-4 right-4 z-20">
-          <div className="flex items-center gap-1 px-2.5 py-1 bg-red-500 text-white rounded-full text-xs font-semibold shadow-lg animate-pulse">
-            <FireSolidIcon className="h-3 w-3" />
-            <span>Popular</span>
-          </div>
-        </div>
 
         {/* Image Container */}
         <div className="relative h-56 overflow-hidden">
@@ -105,14 +90,6 @@ const PopularArticleCard: React.FC<{
             <span className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-green-800 text-sm font-semibold rounded-full shadow-lg">
               {categoryName}
             </span>
-          </div>
-
-          {/* Views Counter on Image */}
-          <div className="absolute bottom-4 right-4">
-            <div className="flex items-center gap-1 px-3 py-1.5 bg-black/60 backdrop-blur-sm text-white rounded-full text-sm font-medium">
-              <EyeSolidIcon className="h-4 w-4" />
-              <span>{article.views.toLocaleString()}</span>
-            </div>
           </div>
         </div>
 
@@ -317,7 +294,7 @@ const ArtikelKesehatan: React.FC = () => {
         </script>
       </Head>
 
-      <main className="bg-white min-h-screen pt-36 pb-16">
+      <main className="bg-white min-h-screen pt-28 pb-16">
         {/* Hero Section with Search */}
         <SearchSection
           searchQuery={filterState.searchQuery}
@@ -348,7 +325,7 @@ const ArtikelKesehatan: React.FC = () => {
                 </h2>
                 
                 <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-                  Artikel kesehatan yang paling banyak dibaca dan dipercaya oleh ribuan pembaca kami
+                  Artikel kesehatan yang paling banyak dibaca dan dipercaya oleh ribuan pembaca
                 </p>
               </div>
 

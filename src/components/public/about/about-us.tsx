@@ -11,7 +11,7 @@ export default function AboutUs() {
   const [activeTab, setActiveTab] = useState<TabType>("sejarah");
 
   return (
-    <div className="bg-white min-h-screen mt-34">
+    <div className="bg-white min-h-screen mt-26">
       <HeroSection />
 
       <NavigationTabs activeTab={activeTab} setActiveTab={setActiveTab} />

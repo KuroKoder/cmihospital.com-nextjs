@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import GedungCMI from "../../public/assets/images/cmi.webp";
+import GedungCMI from "../assets/images/cmi.webp";
 import {
   ChevronRight,
   Building2,
@@ -18,6 +18,7 @@ import {
   Plus,
 } from "lucide-react";
 import ModalsKonsultasi from "../../ui/modal-konsultasi";
+import { testimonials } from "../../../data/testimonials";
 
 export default function FacilitiesPage() {
   const [activeTab, setActiveTab] = useState("chronic");
@@ -215,31 +216,13 @@ export default function FacilitiesPage() {
     },
   ]);
 
-  const testimonials = [
-    {
-      name: "Ahmad Suherman",
-      position: "Pasien Diabetes",
-      text: "Pendekatan pengobatan komplementer di Klinik CMI membantu saya mengelola diabetes dengan lebih baik. Kualitas hidup saya meningkat signifikan.",
-      avatar: "/api/placeholder/48/48",
-    },
-    {
-      name: "Siti Rahma",
-      position: "Keluarga Pasien Kanker",
-      text: "Perawatan holistik yang diberikan kepada ibu saya sungguh luar biasa. Staf medis sangat perhatian dan fasilitas rawat inap sangat nyaman.",
-      avatar: "/api/placeholder/48/48",
-    },
-    {
-      name: "Dr. Rudi Hartono",
-      position: "Dokter Rujukan",
-      text: "Sebagai dokter yang sering merujuk pasien ke CMI, saya sangat terkesan dengan pendekatan pengobatan komplementer yang ilmiah dan berbasis bukti.",
-      avatar: "/api/placeholder/48/48",
-    },
-  ];
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Select first 3 testimonials for display
+  const displayedTestimonials = testimonials.slice(0, 3);
+
   return (
-    <div className="font-sans mt-34">
+    <div className="font-sans mt-26">
       {/* Hero Section */}
       <section className="bg-green-700 text-white py-15">
         <div className="container flex mx-auto px-4 items-center">
@@ -486,11 +469,11 @@ export default function FacilitiesPage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-xl">
+              {displayedTestimonials.map((testimonial) => (
+                <div key={testimonial.id} className="bg-gray-50 p-6 rounded-xl">
                   <div className="flex items-center mb-4">
                     <img
-                      src={testimonial.avatar}
+                      src={testimonial.image}
                       alt={testimonial.name}
                       className="w-12 h-12 rounded-full object-cover"
                     />
@@ -499,12 +482,19 @@ export default function FacilitiesPage() {
                         {testimonial.name}
                       </h4>
                       <p className="text-sm text-gray-500">
-                        {testimonial.position}
+                        {testimonial.condition} - {testimonial.age} Tahun
                       </p>
                     </div>
                   </div>
-                  <p className="text-gray-600 italic">&ldquo;{testimonial.text}&rdquo;</p>
-
+                  <div className="mb-2">
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                      {testimonial.tag}
+                    </span>
+                  </div>
+                  <h5 className="font-semibold text-gray-900 mb-2">
+                    {testimonial.title}
+                  </h5>
+                  <p className="text-gray-600 italic text-sm">&ldquo;{testimonial.story}&rdquo;</p>
                 </div>
               ))}
             </div>

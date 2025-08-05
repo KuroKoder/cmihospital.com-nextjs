@@ -1,110 +1,37 @@
 "use client";
-import { useState } from "react";
-import { Search, Calendar, Heart, ArrowRight, User, Clock } from "lucide-react";
-// import MainLayout from "@/layout/MainLayout";
+import { ArrowRight, User, Calendar, Clock } from "lucide-react";
+import { ARTICLES, CATEGORIES } from "@/data/articles";
+import Link from "next/link";
+import ArticleCard from "@/components/public/articles/ArticleCard";
 
 // Komponen utama
 export default function HealthArticlesSection() {
-  const [activeTab, setActiveTab] = useState("all");
-  const [hoveredCardId, setHoveredCardId] = useState<number | null>(null);
-  const [showAllArticles, setShowAllArticles] = useState(false);
+  // Ambil 3 artikel terbaru berdasarkan tanggal
+  const latestArticles = ARTICLES
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
-  // Data artikel kesehatan
-  const healthArticles = [
-    {
-      id: 1,
-      title: "10 Cara Menjaga Kesehatan Jantung",
-      excerpt:
-        "Temukan tips sederhana untuk menjaga kesehatan jantung Anda setiap hari.",
-      category: "jantung",
-      image: "/images/articles/homepage/kesehatan-jantung.png",
-      author: "dr. Anita Setiawan",
-      date: "28 Apr 2025",
-      readTime: "5 menit",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Nutrisi Penting untuk Menguatkan Sistem Imun",
-      excerpt:
-        "Makanan apa saja yang dapat meningkatkan daya tahan tubuh secara alami.",
-      category: "nutrisi",
-      image: "/images/articles/homepage/nutrisi-penting.png",
-      author: "dr. Budi Santoso",
-      date: "26 Apr 2025",
-      readTime: "4 menit",
-      featured: false,
-    },
-    {
-      id: 3,
-      title: "Manfaat Olahraga Rutin bagi Kesehatan Mental",
-      excerpt:
-        "Hubungan antara aktivitas fisik dan kesejahteraan mental yang sering terabaikan.",
-      category: "mental",
-      image: "/images/articles/homepage/olahraga-rutin.png",
-      author: "dr. Citra Dewi",
-      date: "24 Apr 2025",
-      readTime: "6 menit",
-      featured: false,
-    },
-    {
-      id: 4,
-      title: "Panduan Tidur Berkualitas untuk Kesehatan Optimal",
-      excerpt:
-        "Pola tidur yang baik untuk meningkatkan kesehatan dan produktivitas Anda.",
-      category: "gaya-hidup",
-      image: "/images/articles/homepage/tidur-berkualitas.png",
-      author: "dr. Dian Pratama",
-      date: "22 Apr 2025",
-      readTime: "5 menit",
-      featured: true,
-    },
-    {
-      id: 5,
-      title: "Deteksi Dini Diabetes: Gejala yang Tidak Boleh Diabaikan",
-      excerpt:
-        "Kenali tanda-tanda awal diabetes untuk penanganan yang lebih efektif.",
-      category: "penyakit",
-      image: "/images/articles/homepage/deteksi-diabetes.png",
-      author: "dr. Eko Pranoto",
-      date: "20 Apr 2025",
-      readTime: "7 menit",
-      featured: false,
-    },
-    {
-      id: 6,
-      title: "Menjaga Kesehatan Tulang dan Sendi di Usia Lanjut",
-      excerpt: "Langkah-langkah mencegah osteoporosis dan masalah persendian.",
-      category: "lansia",
-      image: "/images/articles/homepage/deteksi-diabetes.pngw",
-      author: "dr. Farida Husna",
-      date: "18 Apr 2025",
-      readTime: "4 menit",
-      featured: false,
-    },
-  ];
-
-  // Filter artikel berdasarkan tab yang aktif
-  const filteredArticles =
-    activeTab === "all"
-      ? healthArticles
-      : activeTab === "featured"
-      ? healthArticles.filter((article) => article.featured)
-      : healthArticles.filter((article) => article.category === activeTab);
-
-  // Batasi jumlah artikel yang ditampilkan jika showAllArticles false
-  const displayedArticles = showAllArticles
-    ? filteredArticles
-    : filteredArticles.slice(0, 3);
-
-  // Mengatur artikel featured di bagian atas
-  const featuredArticles = healthArticles.filter((article) => article.featured);
-  const latestArticle = featuredArticles[0] || healthArticles[0];
+  // Mengatur artikel featured berdasarkan views terbanyak
+  const featuredArticles = ARTICLES
+    .filter((article) => article.isFeatured)
+    .sort((a, b) => b.views - a.views);
+  const latestArticle = featuredArticles[0] || ARTICLES[0];
 
   // Handle tab change
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    setShowAllArticles(false); // Reset ke tampilan awal (3 artikel) ketika tab berubah
+  const handleReadMore = (slug: string) => {
+    // Navigasi ke detail artikel akan ditambahkan di sini
+    console.log('Navigate to:', `/artikel-kesehatan/${slug}`);
+  };
+
+  // Format tanggal
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = { 
+      day: 'numeric', 
+      month: 'short', 
+      year: 'numeric' 
+    };
+    return date.toLocaleDateString('id-ID', options);
   };
 
   return (
@@ -121,7 +48,7 @@ export default function HealthArticlesSection() {
                 {latestArticle.title}
               </h1>
               <p className="text-gray-600 text-base text-justify">
-                {latestArticle.excerpt}
+                {latestArticle.description}
               </p>
 
               <div className="flex items-center gap-5 text-sm text-gray-500">
@@ -131,7 +58,7 @@ export default function HealthArticlesSection() {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={16} className="text-green-600" />
-                  <span>{latestArticle.date}</span>
+                  <span>{formatDate(latestArticle.date)}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Clock size={16} className="text-green-600" />
@@ -139,26 +66,34 @@ export default function HealthArticlesSection() {
                 </div>
               </div>
 
-              <button className="mt-4 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-300">
-                Baca Selengkapnya
-                <ArrowRight size={16} />
-              </button>
+              <Link href={`/artikel-kesehatan/${latestArticle.slug}`}>
+                <button className="mt-4 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-300">
+                  Baca Selengkapnya
+                  <ArrowRight size={16} />
+                </button>
+              </Link>
             </div>
 
             <div className="w-full md:w-1/2">
-              <div className="relative overflow-hidden rounded-xl shadow-lg">
-                <img
-                  src={latestArticle.image}
-                  alt={latestArticle.title}
-                  className="w-full h-64 md:h-96 object-cover transition-transform duration-500 hover:scale-105"
-                />
-                <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-900/70 to-transparent p-6">
-                  <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-md">
-                    {latestArticle.category.charAt(0).toUpperCase() +
-                      latestArticle.category.slice(1)}
-                  </span>
+              <Link href={`/artikel-kesehatan/${latestArticle.slug}`}>
+                <div className="relative overflow-hidden rounded-xl shadow-lg cursor-pointer group">
+                  <img
+                    src={latestArticle.image}
+                    alt={latestArticle.title}
+                    className="w-full h-64 md:h-96 object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-900/70 to-transparent p-6">
+                    <div className="flex items-center justify-between">
+                      <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-md">
+                        {CATEGORIES.find(cat => cat.id === latestArticle.category)?.name || latestArticle.category}
+                      </span>
+                      <span className="bg-white/90 text-green-800 text-xs px-2 py-1 rounded-md font-medium">
+                        {latestArticle.views.toLocaleString()} views
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -176,149 +111,45 @@ export default function HealthArticlesSection() {
             </p>
           </div>
 
-          <div className="mt-6 md:mt-0 relative">
-            <div className="flex items-center">
-              <input
-                type="text"
-                placeholder="Cari artikel..."
-                className="w-full pl-10 pr-4 py-2 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-              />
-              <Search
-                size={20}
-                className="absolute left-3 top-2.5 text-white bg-amber-50"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs kategori */}
-        <div className="mb-10">
-          <div className="flex flex-wrap gap-3">
-            {[
-              "all",
-              "featured",
-              "jantung",
-              "nutrisi",
-              "mental",
-              "gaya-hidup",
-              "penyakit",
-              "lansia",
-            ].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => handleTabChange(tab)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                  activeTab === tab
-                    ? "bg-green-600 text-white shadow-md"
-                    : "bg-green-50 text-green-600 hover:bg-green-100"
-                }`}
-              >
-                {tab === "all"
-                  ? "Semua"
-                  : tab === "featured"
-                  ? "Unggulan"
-                  : tab.charAt(0).toUpperCase() + tab.slice(1)}
+          <div className="mt-6 md:mt-0">
+            <Link href="/artikel-kesehatan">
+              <button className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-300">
+                Lihat Semua Artikel
+                <ArrowRight size={16} />
               </button>
-            ))}
+            </Link>
           </div>
         </div>
 
-        {/* Grid artikel - menampilkan pesan jika tidak ada artikel */}
-        {displayedArticles.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayedArticles.map((article) => (
-              <div
-                key={article.id}
-                className="bg-white border border-green-100 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
-                onMouseEnter={() => setHoveredCardId(article.id)}
-                onMouseLeave={() => setHoveredCardId(null)}
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className={`w-full h-52 object-cover transition-transform duration-500 ${
-                      hoveredCardId === article.id ? "scale-105" : ""
-                    }`}
-                  />
-                  <div className="absolute top-3 right-3">
-                    <button className="p-2 bg-white/80 hover:bg-white rounded-full text-gray-700 hover:text-green-600 transition-colors duration-300">
-                      <Heart size={18} />
-                    </button>
-                  </div>
-                  <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-900/70 to-transparent p-4">
-                    <span className="bg-green-600 text-white text-xs px-2.5 py-1 rounded-md">
-                      {article.category.charAt(0).toUpperCase() +
-                        article.category.slice(1)}
-                    </span>
-                  </div>
-                </div>
+        {/* Grid artikel - menggunakan ArticleCard component */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {latestArticles.map((article) => (
+            <ArticleCard
+              key={article.id}
+              article={article}
+              categories={CATEGORIES}
+              showFeaturedBadge={true}
+            />
+          ))}
+        </div>
 
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-green-800 mb-3 line-clamp-2">
-                    {article.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3 text-justify">
-                    {article.excerpt}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-green-50">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-medium">
-                        {article.author
-                          .split(" ")
-                          .map((name) => name[0])
-                          .join("")}
-                      </div>
-                      <div className="text-xs text-gray-600">
-                        <p className="font-medium">
-                          {article.author.split(" ")[0]}
-                        </p>
-                        <p>{article.date}</p>
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-500 flex items-center gap-1">
-                      <Clock size={14} />
-                      {article.readTime}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <p className="text-gray-500 text-lg">
-              Tidak ada artikel untuk kategori ini.
+        {/* Call to Action Section */}
+        <div className="mt-16 pt-12 border-t border-green-100">
+          <div className="text-center bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-8">
+            <h3 className="text-2xl font-bold text-green-800 mb-4">
+              Ingin Membaca Lebih Banyak Artikel Kesehatan?
+            </h3>
+            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+              Jelajahi koleksi lengkap artikel kesehatan kami dengan berbagai topik menarik dan informasi terkini dari para ahli.
             </p>
+            <Link href="/artikel-kesehatan">
+              <button className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-8 py-4 rounded-lg transition-all duration-300 text-lg">
+                Jelajahi Semua Artikel
+                <ArrowRight size={20} />
+              </button>
+            </Link>
           </div>
-        )}
-
-        {/* Tombol untuk melihat lebih banyak artikel */}
-        {filteredArticles.length > 3 && !showAllArticles && (
-          <div className="mt-16 text-center">
-            <button
-              onClick={() => setShowAllArticles(true)}
-              className="inline-flex items-center gap-2 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 font-medium px-8 py-3 rounded-lg transition-all duration-300"
-            >
-              Lihat Semua Artikel ({filteredArticles.length})
-              <ArrowRight size={16} />
-            </button>
-          </div>
-        )}
-
-        {/* Tombol untuk kembali ke tampilan terbatas */}
-        {showAllArticles && (
-          <div className="mt-16 text-center">
-            <button
-              onClick={() => setShowAllArticles(false)}
-              className="inline-flex items-center gap-2 bg-white border-2 border-green-600 text-green-600 hover:bg-green-50 font-medium px-8 py-3 rounded-lg transition-all duration-300"
-            >
-              Tampilkan Lebih Sedikit
-              <ArrowRight size={16} className="rotate-90" />
-            </button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
