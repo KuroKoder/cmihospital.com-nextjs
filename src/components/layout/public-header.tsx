@@ -35,9 +35,9 @@ import {
 
 // Constants
 const CONTACT_INFO = {
-  phone: "(021) 7890-1234",
+  phone: "(022) 253-1000",
   email: "info@cmihospital.com",
-  hours: "Senin-Sabtu: 08.00-20.00",
+  hours: "IGD 24 Jam, Komplementer 08.00 - 17.00 WIB",
   location: "Bandung, Indonesia",
 } as const;
 

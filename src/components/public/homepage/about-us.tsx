@@ -79,17 +79,6 @@ const TentangKami = () => {
     },
   };
 
-  const floatingVariants: Variants = {
-    floating: {
-      y: [-20, 20, -20],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    },
-  };
-
   return (
     <section
       id="tentang-kami"
@@ -337,10 +326,9 @@ const TentangKami = () => {
 
                   <Image
                     src="/images/hero/cmi.webp"
-                    alt="Gedung Klinik CMI"
                     fill
-                    className="object-cover"
-                    priority
+                    alt="CMI"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
 
                   {/* Gradient overlay */}

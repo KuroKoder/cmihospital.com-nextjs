@@ -1,8 +1,6 @@
 // File: components/footer/FooterMain.tsx
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
-import { FaChevronRight } from "react-icons/fa";
 import SocialIcons from "./SocialIcons";
 import FooterLinkList from "./FooterLinkList";
 import NewsletterForm from "./NewsletterForm";

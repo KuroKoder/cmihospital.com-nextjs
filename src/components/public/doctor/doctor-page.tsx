@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import Image from "next/image";
 const doctors = [
   {
     id: 1,
@@ -141,9 +141,10 @@ const Doctors = () => {
 
                 {/* Full Background Image */}
                 <div className="absolute inset-0 w-full h-full overflow-hidden">
-                  <img
+                  <Image
                     src={doctor.image}
                     alt={doctor.name}
+                    fill
                     className="w-full h-full object-cover object-center"
                   />
                   {/* Strong Gradient Overlay for text readability */}

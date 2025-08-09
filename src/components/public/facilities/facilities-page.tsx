@@ -1,221 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
-import GedungCMI from "../assets/images/cmi.webp";
-import {
-  ChevronRight,
-  Building2,
-  Beaker,
-  Hospital,
-  Heart,
-  Users,
-  Microscope,
-  BedDouble,
-  Coffee,
-  Edit,
-  Trash2,
-  Plus,
-} from "lucide-react";
+import { ChevronRight, Heart, Users, Microscope, BedDouble, Coffee } from "lucide-react";
 import ModalsKonsultasi from "../../ui/modal-konsultasi";
 import { testimonials } from "../../../data/testimonials";
+import { facilitiesData } from "../../../data/fasilitasData";
+import Image from "next/image";
+
+// Icon mapping
+const iconMap = {
+  Heart: Heart,
+  Users: Users,
+  Microscope: Microscope,
+  BedDouble: BedDouble,
+  Coffee: Coffee,
+};
 
 export default function FacilitiesPage() {
   const [activeTab, setActiveTab] = useState("chronic");
-  // Data fasilitas (akan diambil dari API)
-  const [facilities] = useState([
-    {
-      id: "chronic",
-      title: "Spesialisasi Penyakit Kronis",
-      icon: <Heart className="w-6 h-6 text-green-600" />,
-      image: "/api/placeholder/600/400",
-      description:
-        "Pusat unggulan untuk pengobatan penyakit kronis dengan pendekatan komplementer berlandaskan metode Ibnu Sina.",
-      details: [
-        {
-          id: 1,
-          title: "Pengobatan Kanker",
-          description:
-            "Layanan terapi komplementer untuk pasien kanker dengan pendekatan holistik yang memadukan pengobatan tradisional dan modern.",
-          image: "/images/fasilitas/chronic/kanker.png",
-        },
-        {
-          id: 2,
-          title: "Penanganan Gagal Ginjal",
-          description:
-            "Program komprehensif untuk pasien gagal ginjal dengan metode terapi yang membantu meningkatkan kualitas hidup.",
-          image: "/images/fasilitas/chronic/gagal-ginjal.png",
-        },
-        {
-          id: 3,
-          title: "Manajemen Diabetes",
-          description:
-            "Program pengelolaan diabetes jangka panjang dengan pendekatan nutrisi, aktivitas fisik dan terapi komplementer.",
-          image: "/images/fasilitas/chronic/diabetes.png",
-        },
-        {
-          id: 4,
-          title: "Perawatan Jantung",
-          description:
-            "Perawatan jantung terpadu dengan fokus pada pencegahan, pengobatan, dan rehabilitasi menggunakan metode Ibnu Sina.",
-          image: "/images/fasilitas/chronic/jantung.png",
-        },
-      ],
-    },
-    {
-      id: "general",
-      title: "Poliklinik Umum",
-      icon: <Users className="w-6 h-6 text-green-600" />,
-      image: "/api/placeholder/600/400",
-      description:
-        "Layanan kesehatan umum untuk menangani berbagai keluhan dan penyakit sehari-hari.",
-      details: [
-        {
-          id: 5,
-          title: "Konsultasi Dokter Umum",
-          description:
-            "Layanan konsultasi dengan dokter umum berpengalaman untuk berbagai keluhan kesehatan.",
-          image: "/images/fasilitas/general/konsultasi-dokter-umum.png",
-        },
-        {
-          id: 6,
-          title: "Pemeriksaan Kesehatan Rutin",
-          description:
-            "Layanan pemeriksaan kesehatan berkala untuk memantau kondisi kesehatan Anda.",
-          image: "/images/fasilitas/general/pemeriksaan-kesehatan-rutin.png",
-        },
-        {
-          id: 7,
-          title: "Vaksinasi",
-          description:
-            "Program vaksinasi untuk berbagai penyakit menular sebagai upaya pencegahan.",
-          image: "/images/fasilitas/general/vaksinasi.png",
-        },
-        {
-          id: 8,
-          title: "Pengobatan Penyakit Ringan",
-          description:
-            "Penanganan cepat untuk penyakit umum seperti flu, demam, dan infeksi ringan.",
-          image: "/images/fasilitas/general/pengobatan-penyakit-ringan.png",
-        },
-      ],
-    },
-    {
-      id: "laboratory",
-      title: "Laboratorium",
-      icon: <Microscope className="w-6 h-6 text-green-600" />,
-      image: "/api/placeholder/600/400",
-      description:
-        "Fasilitas laboratorium modern untuk mendukung diagnosis dan pemantauan kesehatan pasien.",
-      details: [
-        {
-          id: 9,
-          title: "Pemeriksaan Darah Lengkap",
-          description:
-            "Analisis darah menyeluruh untuk mendeteksi berbagai kondisi kesehatan.",
-          image: "/images/fasilitas/laboratory/pemeriksaan-darah-lengkap.png",
-        },
-        {
-          id: 10,
-          title: "Tes Fungsi Organ",
-          description:
-            "Pemeriksaan fungsi organ vital seperti hati, ginjal, dan jantung.",
-          image: "/images/fasilitas/laboratory/tes-fungsi-organ.png",
-        },
-        {
-          id: 11,
-          title: "Tes Hormon",
-          description:
-            "Pemeriksaan kadar hormon untuk diagnosis dan pemantauan berbagai kondisi endokrin.",
-          image: "/images/fasilitas/laboratory/tes-hormon.png",
-        },
-        {
-          id: 12,
-          title: "Tes Genetik",
-          description:
-            "Analisis genetik untuk mendeteksi predisposisi terhadap penyakit tertentu.",
-          image: "/images/fasilitas/laboratory/tes-genetik.png",
-        },
-      ],
-    },
-    {
-      id: "inpatient",
-      title: "Rawat Inap",
-      icon: <BedDouble className="w-6 h-6 text-green-600" />,
-      image: "/api/placeholder/600/400",
-      description:
-        "Fasilitas rawat inap nyaman dengan perawatan optimal untuk pasien yang membutuhkan pengawasan intensif.",
-      details: [
-        {
-          id: 13,
-          title: "Kamar Rawat Inap Nyaman",
-          description:
-            "Kamar rawat inap dengan berbagai pilihan kelas yang dilengkapi fasilitas pendukung kenyamanan pasien.",
-          image: "/images/fasilitas/inpatient/kamar-rawat-inap-nyaman.png",
-        },
-        {
-          id: 14,
-          title: "Perawatan 24 Jam",
-          description:
-            "Tim medis profesional yang siap memberikan perawatan 24 jam penuh.",
-          image: "/images/fasilitas/inpatient/perawatan-24-jam.png",
-        },
-        {
-          id: 15,
-          title: "Ruang Keluarga",
-          description:
-            "Area khusus untuk keluarga pasien yang dilengkapi dengan fasilitas pendukung.",
-          image: "/images/fasilitas/inpatient/ruang-keluarga.png",
-        },
-        {
-          id: 16,
-          title: "Program Rehabilitasi",
-          description:
-            "Program rehabilitasi terpadu untuk pemulihan pasien pascaperawatan.",
-          image: "/images/fasilitas/inpatient/program-rehabilitasi.png",
-        },
-      ],
-    },
-    {
-      id: "amenities",
-      title: "Fasilitas Pendukung",
-      icon: <Coffee className="w-6 h-6 text-green-600" />,
-      image: "/api/placeholder/600/400",
-      description:
-        "Berbagai fasilitas pendukung untuk kenyamanan pasien dan keluarga selama berada di klinik.",
-      details: [
-        {
-          id: 17,
-          title: "Kafetaria",
-          description:
-            "Kafetaria yang menyediakan menu sehat dan bergizi untuk pasien dan pengunjung.",
-          image: "/images/fasilitas/amenities/kafetaria.png",
-        },
-        {
-          id: 18,
-          title: "Apotek",
-          description:
-            "Apotek lengkap dengan berbagai obat konvensional dan herbal.",
-          image: "/images/fasilitas/amenities/apotek.png",
-        },
-        {
-          id: 19,
-          title: "Area Parkir Luas",
-          description:
-            "Lahan parkir yang luas dan aman untuk kendaraan pasien dan pengunjung.",
-          image: "/images/fasilitas/amenities/area-parkir-luas.png",
-        },
-        {
-          id: 20,
-          title: "Ruang Ibadah",
-          description:
-            "Ruang ibadah nyaman untuk mendukung kebutuhan spiritual pasien dan keluarga.",
-          image: "/images/fasilitas/amenities/ruang-ibadah.png",
-        },
-      ],
-    },
-  ]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Select first 3 testimonials for display
@@ -282,7 +84,7 @@ export default function FacilitiesPage() {
 
             {/* Tabs */}
             <div className="mb-8 flex flex-wrap justify-center gap-2">
-              {facilities.map((facility) => (
+              {facilitiesData.map((facility) => (
                 <button
                   key={facility.id}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
@@ -298,7 +100,7 @@ export default function FacilitiesPage() {
             </div>
 
             {/* Content */}
-            {facilities.map((facility) => (
+            {facilitiesData.map((facility) => (
               <div
                 key={facility.id}
                 className={`bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-500 ${
@@ -308,22 +110,26 @@ export default function FacilitiesPage() {
                 }`}
               >
                 {/* Facility Header with Image */}
-                <div className="relative h-64 overflow-hidden">
-                  <img
+                <div className="relative w-full h-64 overflow-hidden rounded-t-xl">
+                  <Image
                     src={facility.image}
                     alt={facility.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 1200px"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-green-900 bg-opacity-50 flex items-center justify-center">
                     <div className="text-center text-white">
                       <div className="bg-white bg-opacity-20 p-4 rounded-full inline-block mb-4">
-                        {facility.icon}
+                        {(() => {
+                          const IconComponent = iconMap[facility.iconName];
+                          return <IconComponent className="w-6 h-6 text-green-600" />;
+                        })()}
                       </div>
                       <h3 className="text-3xl font-bold">{facility.title}</h3>
                     </div>
                   </div>
                 </div>
-
                 <div className="p-8">
                   <p className="text-gray-600 mb-8 text-lg">
                     {facility.description}
@@ -336,12 +142,14 @@ export default function FacilitiesPage() {
                         className="bg-gray-50 rounded-lg overflow-hidden"
                       >
                         {/* Detail Image */}
-                        <div className="h-48 overflow-hidden">
-                          <img
-                            src={detail.image}
-                            alt={detail.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          />
+                        <div className="relative h-48 w-full overflow-hidden">
+                          <Image
+                          src={detail.image}
+                          alt={detail.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover hover:scale-105 transition-transform duration-300"
+                        />
                         </div>
 
                         {/* Detail Content */}
@@ -471,21 +279,28 @@ export default function FacilitiesPage() {
             <div className="grid md:grid-cols-3 gap-8">
               {displayedTestimonials.map((testimonial) => (
                 <div key={testimonial.id} className="bg-gray-50 p-6 rounded-xl">
-                  <div className="flex items-center mb-4">
-                    <img
+                 <div className="flex flex-col sm:flex-row items-center sm:items-start mb-4 w-full gap-4">
+                  {/* Gambar */}
+                  <div className="relative w-40 h-40 flex-shrink-0">
+                    <Image
                       src={testimonial.image}
                       alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 160px"
+                      className="object-cover rounded-lg"
                     />
-                    <div className="ml-4">
-                      <h4 className="font-semibold text-gray-900">
-                        {testimonial.name}
-                      </h4>
-                      <p className="text-sm text-gray-500">
-                        {testimonial.condition} - {testimonial.age} Tahun
-                      </p>
-                    </div>
                   </div>
+
+                  {/* Teks */}
+                  <div className="text-center sm:text-left">
+                    <h4 className="font-semibold text-gray-900 text-lg leading-tight">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {testimonial.condition} - {testimonial.age} Tahun
+                    </p>
+                  </div>
+                </div>
                   <div className="mb-2">
                     <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
                       {testimonial.tag}

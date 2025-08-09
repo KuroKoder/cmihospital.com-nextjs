@@ -5,6 +5,7 @@ import LayananUnggulan from "@/components/public/homepage/featured-services";
 import ArtikelTerbaru from "@/components/public/homepage/newest-articles";
 import SocialMediaVideosSection from "@/components/public/homepage/video-section";
 import PatientTestimonialSection from "@/components/public/homepage/testimonials";
+import ConsultationSection from "@/components/public/homepage/consultation-contact";
 // Update the import path below if the actual path is different, for example:
 import MainLayout from "@/components/layout/main-layout";
 
@@ -53,6 +54,7 @@ export default function HomePage() {
       <ArtikelTerbaru />
       <PatientTestimonialSection />
       <SocialMediaVideosSection />
+      <ConsultationSection />
     </MainLayout>
   );
 }

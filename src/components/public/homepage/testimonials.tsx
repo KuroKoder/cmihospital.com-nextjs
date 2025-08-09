@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { testimonials } from "../../../data/testimonials";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 export default function MedicalTestimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,9 +33,11 @@ export default function MedicalTestimonials() {
     <section className="relative h-[75vh] w-full overflow-hidden bg-gray-900">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
-        <img
+        <Image
           src={current.image}
           alt={current.name}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="w-full h-full object-cover"
         />
         {/* Desktop: Left overlay, Mobile: Bottom overlay */}
