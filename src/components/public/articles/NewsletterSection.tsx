@@ -45,12 +45,12 @@ const NewsletterSection: React.FC = () => {
                 placeholder="Alamat email Anda"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-l-md border-y border-l border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="flex-1 px-3 text-gray-500 py-3 rounded-l-md border-y border-l border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
                 required
               />
               <button
                 type="submit"
-                className="bg-green-600 text-white px-6 py-3 rounded-r-md font-medium hover:bg-green-700 transition"
+                className="bg-green-600 text-white px-3 py-3 rounded-r-md font-medium hover:bg-green-700 transition"
               >
                 Langganan
               </button>

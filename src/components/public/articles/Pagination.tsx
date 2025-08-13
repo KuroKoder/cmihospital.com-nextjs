@@ -34,7 +34,7 @@ const Pagination: React.FC<PaginationProps> = ({
       pages.push(renderPageButton(1));
 
       if (currentPage > 3) {
-        pages.push(renderEllipsis('start'));
+        pages.push(renderEllipsis("start"));
       }
 
       // Show pages around current page
@@ -46,7 +46,7 @@ const Pagination: React.FC<PaginationProps> = ({
       }
 
       if (currentPage < totalPages - 2) {
-        pages.push(renderEllipsis('end'));
+        pages.push(renderEllipsis("end"));
       }
 
       // Show last page
@@ -60,7 +60,7 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const renderPageButton = (pageNumber: number) => {
     const isActive = currentPage === pageNumber;
-    
+
     return (
       <button
         key={pageNumber}
@@ -84,7 +84,7 @@ const Pagination: React.FC<PaginationProps> = ({
     );
   };
 
-  const renderEllipsis = (position: 'start' | 'end') => (
+  const renderEllipsis = (position: "start" | "end") => (
     <span
       key={`ellipsis-${position}`}
       className="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 ring-1 ring-inset ring-gray-300 bg-white"
@@ -115,7 +115,7 @@ const Pagination: React.FC<PaginationProps> = ({
           <ChevronLeftIcon className="h-4 w-4 mr-1" />
           Sebelumnya
         </button>
-        
+
         <div className="flex items-center">
           <span className="text-sm text-gray-700">
             Halaman {currentPage} dari {totalPages}
@@ -145,14 +145,18 @@ const Pagination: React.FC<PaginationProps> = ({
           <p className="text-sm text-gray-700">
             Menampilkan{" "}
             <span className="font-medium">
-              {pagination ? (pagination.page - 1) * pagination.pageSize + 1 : (currentPage - 1) * 10 + 1}
+              {pagination
+                ? (pagination.page - 1) * pagination.pageSize + 1
+                : (currentPage - 1) * 10 + 1}
             </span>{" "}
             sampai{" "}
             <span className="font-medium">
-              {pagination 
-                ? Math.min(pagination.page * pagination.pageSize, pagination.total)
-                : Math.min(currentPage * 10, totalPages * 10)
-              }
+              {pagination
+                ? Math.min(
+                    pagination.page * pagination.pageSize,
+                    pagination.total
+                  )
+                : Math.min(currentPage * 10, totalPages * 10)}
             </span>{" "}
             dari{" "}
             <span className="font-medium">
@@ -163,7 +167,10 @@ const Pagination: React.FC<PaginationProps> = ({
         </div>
 
         <div>
-          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <nav
+            className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+            aria-label="Pagination"
+          >
             {/* Previous button */}
             <button
               onClick={() => onPageChange(currentPage - 1)}
@@ -190,7 +197,7 @@ const Pagination: React.FC<PaginationProps> = ({
                   <div
                     key={index}
                     className="relative inline-flex items-center px-4 py-2 text-sm font-medium bg-gray-200 ring-1 ring-inset ring-gray-300 animate-pulse"
-                    style={{ width: '40px', height: '40px' }}
+                    style={{ width: "40px", height: "40px" }}
                   />
                 ))}
               </>
@@ -230,14 +237,14 @@ const Pagination: React.FC<PaginationProps> = ({
             type="number"
             min={1}
             max={totalPages}
-            className="w-16 px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            className="w-16 px-2 py-1 text-sm text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
             onKeyPress={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === "Enter") {
                 const target = e.target as HTMLInputElement;
                 const pageNumber = parseInt(target.value);
                 if (pageNumber >= 1 && pageNumber <= totalPages) {
                   onPageChange(pageNumber);
-                  target.value = '';
+                  target.value = "";
                 }
               }
             }}

@@ -28,8 +28,8 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
               Artikel Terkait
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Baca juga artikel kesehatan lainnya yang mungkin menarik untuk Anda. 
-              Dapatkan informasi lengkap untuk menjaga kesehatan optimal.
+              Baca juga artikel kesehatan lainnya yang mungkin menarik untuk
+              Anda. Dapatkan informasi lengkap untuk menjaga kesehatan optimal.
             </p>
           </div>
 
@@ -41,22 +41,25 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group"
               >
                 {/* Article Image */}
-                <Link href={`/artikel-kesehatan/${article.slug}`} className="block">
+                <Link
+                  href={`/artikel-kesehatan/${article.slug}`}
+                  className="block"
+                >
                   <div className="relative h-48 overflow-hidden">
                     <Image
-                      src={article.image || '/images/placeholder-article.jpg'}
+                      src={article.image || "/images/placeholder-article.jpg"}
                       alt={article.title}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-110"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
-                    
+
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
+
                     {/* Category Badge */}
                     <div className="absolute top-3 left-3 bg-green-600 text-white px-3 py-1 text-xs font-medium rounded-full">
-                      {article.categoryName || 'Kesehatan'}
+                      {article.categoryName || "Kesehatan"}
                     </div>
                   </div>
                 </Link>
@@ -82,18 +85,21 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
                         <Clock className="w-3 h-3" />
                         <span>{article.readTime}</span>
                       </div>
-                      
                     </div>
                   </div>
 
                   {/* Author and Date */}
                   <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
                     <div className="flex items-center gap-1">
-                      <span className="font-medium text-gray-700">{article.author}</span>
+                      <span className="font-medium text-gray-700">
+                        {article.author}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      <span>{formatDateShort(article.publishedAt || article.date)}</span>
+                      <span>
+                        {formatDateShort(article.publishedAt || article.date)}
+                      </span>
                     </div>
                   </div>
 
@@ -127,7 +133,6 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
               </button>
             </Link>
           </div>
-
         </div>
       </div>
     </section>

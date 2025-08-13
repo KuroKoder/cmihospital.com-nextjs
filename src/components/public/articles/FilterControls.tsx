@@ -104,7 +104,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value as SortBy)}
-              className="w-full md:w-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-200"
+              className="w-full md:w-auto px-3 text-black py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition-all duration-200"
               disabled={isLoading}
             >
               <option value="newest">Terbaru</option>
@@ -120,12 +120,12 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs text-gray-600">Filter aktif:</span>
-            
-            {selectedCategory !== 'all' && (
+
+            {selectedCategory !== "all" && (
               <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                {categories.find(cat => cat.id === selectedCategory)?.name}
+                {categories.find((cat) => cat.id === selectedCategory)?.name}
                 <button
-                  onClick={() => onCategoryChange('all')}
+                  onClick={() => onCategoryChange("all")}
                   className="ml-1 hover:text-green-900"
                   aria-label="Hapus filter kategori"
                 >
@@ -134,11 +134,11 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               </span>
             )}
 
-            {sortBy !== 'newest' && (
+            {sortBy !== "newest" && (
               <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                {sortBy === 'oldest' ? 'Terlama' : 'Terpopuler'}
+                {sortBy === "oldest" ? "Terlama" : "Terpopuler"}
                 <button
-                  onClick={() => onSortChange('newest')}
+                  onClick={() => onSortChange("newest")}
                   className="ml-1 hover:text-blue-900"
                   aria-label="Reset ke urutkan terbaru"
                 >
@@ -147,11 +147,11 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               </span>
             )}
 
-            {(selectedCategory !== 'all' || sortBy !== 'newest') && (
+            {(selectedCategory !== "all" || sortBy !== "newest") && (
               <button
                 onClick={() => {
-                  onCategoryChange('all');
-                  onSortChange('newest');
+                  onCategoryChange("all");
+                  onSortChange("newest");
                 }}
                 className="text-xs text-gray-500 hover:text-gray-700 underline"
               >

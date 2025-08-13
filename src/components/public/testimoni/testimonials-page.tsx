@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { Star, Quote, Filter, Users, Heart, Award } from 'lucide-react';
-import { testimonials, type Testimonial } from '@/data/testimonials';
-import CTA from '@/components/ui/cta';
+import React, { useState } from "react";
+import Image from "next/image";
+import { Star, Quote, Filter, Users, Heart, Award } from "lucide-react";
+import { testimonials, type Testimonial } from "@/data/testimonials";
+import CTA from "@/components/ui/cta";
 
 const TestimonialsPage: React.FC = () => {
-  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [selectedFilter, setSelectedFilter] = useState("All");
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
 
   // Get unique tags for filtering
-  const tags = ['All', ...Array.from(new Set(testimonials.map(t => t.tag)))];
+  const tags = ["All", ...Array.from(new Set(testimonials.map((t) => t.tag)))];
 
   // Filter testimonials based on selected tag
-  const filteredTestimonials = selectedFilter === 'All' 
-    ? testimonials 
-    : testimonials.filter(t => t.tag === selectedFilter);
+  const filteredTestimonials =
+    selectedFilter === "All"
+      ? testimonials
+      : testimonials.filter((t) => t.tag === selectedFilter);
 
   const stats = [
     { icon: Users, label: "Pasien Sembuh", value: "1000+" },
@@ -31,12 +32,43 @@ const TestimonialsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 pt-28">
       {/* Header Section */}
-      <div className="relative bg-gradient-to-r from-green-600 to-green-700 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-r from-green-500 to-green-600 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 20 0 L 0 0 0 20' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' /%3E%3C/svg%3E")`
-        }}></div>
-        
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='20' height='20' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 20 0 L 0 0 0 20' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)' /%3E%3C/svg%3E")`,
+          }}
+        ></div>
+
+        {/* Background Decorations */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 opacity-70"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0z' fill='none'/%3E%3Ccircle cx='20' cy='20' r='2' fill='%23ffffff' fill-opacity='0.3'/%3E%3C/svg%3E")`,
+            }}
+          />
+          <div className="absolute top-20 left-20 w-72 h-72 bg-white/5 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl animate-pulse delay-500" />
+
+          {/* Additional Pattern Variations */}
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Ccircle cx='30' cy='30' r='1' fill='%2310b981' fill-opacity='0.4'/%3E%3Ccircle cx='15' cy='15' r='0.8' fill='%23ffffff' fill-opacity='0.2'/%3E%3Ccircle cx='45' cy='15' r='0.6' fill='%2310b981' fill-opacity='0.3'/%3E%3Ccircle cx='15' cy='45' r='0.7' fill='%23ffffff' fill-opacity='0.25'/%3E%3Ccircle cx='45' cy='45' r='0.5' fill='%2310b981' fill-opacity='0.35'/%3E%3C/svg%3E")`,
+            }}
+          />
+
+          {/* Extra Blur Elements for Depth */}
+          <div className="absolute top-32 right-1/4 w-48 h-48 bg-emerald-300/8 rounded-full blur-2xl animate-pulse delay-300" />
+          <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-white/6 rounded-full blur-2xl animate-pulse delay-700" />
+
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-green-600/10 to-green-800/20" />
+        </div>
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
@@ -45,13 +77,18 @@ const TestimonialsPage: React.FC = () => {
             <p className="text-xl md:text-2xl text-green-100 mb-8 max-w-3xl mx-auto leading-relaxed">
               Kisah nyata kesembuhan pasien CMI
             </p>
-            
+
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
               {stats.map((stat, index) => (
-                <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <div
+                  key={index}
+                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
+                >
                   <stat.icon className="w-8 h-8 text-green-200 mx-auto mb-3" />
-                  <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                  <div className="text-3xl font-bold text-white mb-1">
+                    {stat.value}
+                  </div>
                   <div className="text-green-100">{stat.label}</div>
                 </div>
               ))}
@@ -71,8 +108,8 @@ const TestimonialsPage: React.FC = () => {
               onClick={() => setSelectedFilter(tag)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 selectedFilter === tag
-                  ? 'bg-green-600 text-white shadow-lg transform scale-105'
-                  : 'bg-white text-green-600 border border-green-200 hover:bg-green-50 hover:border-green-300'
+                  ? "bg-green-600 text-white shadow-lg transform scale-105"
+                  : "bg-white text-green-600 border border-green-200 hover:bg-green-50 hover:border-green-300"
               }`}
             >
               {tag}
@@ -103,9 +140,10 @@ const TestimonialsPage: React.FC = () => {
                       className="object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const fallback = target.nextElementSibling as HTMLElement;
-                        if (fallback) fallback.style.display = 'flex';
+                        target.style.display = "none";
+                        const fallback =
+                          target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = "flex";
                       }}
                     />
                     <div className="absolute inset-0 bg-white/20 rounded-full hidden items-center justify-center text-2xl font-bold text-white">
@@ -114,7 +152,9 @@ const TestimonialsPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-lg">{testimonial.name}</h3>
-                    <p className="text-green-100 text-sm">{testimonial.age} tahun</p>
+                    <p className="text-green-100 text-sm">
+                      {testimonial.age} tahun
+                    </p>
                   </div>
                 </div>
                 <div className="mt-4">
@@ -136,18 +176,22 @@ const TestimonialsPage: React.FC = () => {
                 </div>
 
                 <div className="relative">
-                  <p className={`text-gray-700 leading-relaxed ${
-                    expandedCard === testimonial.id ? '' : 'line-clamp-3'
-                  }`}>
+                  <p
+                    className={`text-gray-700 leading-relaxed ${
+                      expandedCard === testimonial.id ? "" : "line-clamp-3"
+                    }`}
+                  >
                     &quot;{testimonial.story}&quot;
                   </p>
-                  
+
                   {testimonial.story.length > 150 && (
                     <button
                       onClick={() => toggleExpanded(testimonial.id)}
                       className="text-green-600 hover:text-green-700 font-medium text-sm mt-2 focus:outline-none"
                     >
-                      {expandedCard === testimonial.id ? 'Tutup' : 'Baca Selengkapnya'}
+                      {expandedCard === testimonial.id
+                        ? "Tutup"
+                        : "Baca Selengkapnya"}
                     </button>
                   )}
                 </div>
@@ -162,7 +206,9 @@ const TestimonialsPage: React.FC = () => {
                       />
                     ))}
                   </div>
-                  <span className="text-sm text-gray-600 ml-2">Sembuh Total</span>
+                  <span className="text-sm text-gray-600 ml-2">
+                    Sembuh Total
+                  </span>
                 </div>
               </div>
             </div>

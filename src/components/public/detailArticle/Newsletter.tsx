@@ -1,26 +1,30 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { CheckCircleIcon, EnvelopeIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { useState } from "react";
+import {
+  CheckCircleIcon,
+  EnvelopeIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/outline";
 
 export default function Newsletter() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
+
     setIsLoading(true);
-    
+
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     setIsSubscribed(true);
     setIsLoading(false);
-    setEmail('');
-    
+    setEmail("");
+
     // Reset after 5 seconds
     setTimeout(() => setIsSubscribed(false), 5000);
   };
@@ -39,14 +43,14 @@ export default function Newsletter() {
             <div className="absolute top-1/3 right-1/3 w-2 h-2 bg-white rounded-full"></div>
           </div>
         </div>
-        
+
         <div className="relative text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
             <CheckCircleIcon className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-bold mb-2">Terima Kasih!</h2>
           <p className="text-green-100 mb-4">
-            Anda telah berhasil berlangganan newsletter kami. 
+            Anda telah berhasil berlangganan newsletter kami.
           </p>
           <p className="text-sm text-green-200">
             Cek email Anda untuk konfirmasi langganan.
@@ -71,17 +75,17 @@ export default function Newsletter() {
           <div className="absolute top-3/4 right-1/4 w-4 h-4 bg-white rounded-full"></div>
         </div>
       </div>
-      
+
       {/* Floating Elements */}
       <div className="absolute top-8 right-8 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
       <div className="absolute bottom-8 left-8 w-16 h-16 bg-white/10 rounded-full blur-lg"></div>
-      
+
       <div className="relative">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-6">
             <EnvelopeIcon className="w-8 h-8 text-white" />
           </div>
-          
+
           <h2 className="text-2xl lg:text-3xl font-bold mb-4 flex items-center justify-center">
             <SparklesIcon className="w-6 h-6 mr-2" />
             Dapatkan Tips Kesehatan Terbaru
@@ -103,8 +107,8 @@ export default function Newsletter() {
                 className="w-full px-5 py-3 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white/50 transition-all duration-200 bg-white/95 backdrop-blur-sm"
               />
             </div>
-            
-            <button 
+
+            <button
               type="submit"
               disabled={isLoading || !email.trim()}
               className="px-8 py-3 bg-white text-green-600 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[140px]"
@@ -115,7 +119,7 @@ export default function Newsletter() {
                   Memproses...
                 </div>
               ) : (
-                'Berlangganan'
+                "Berlangganan"
               )}
             </button>
           </div>
