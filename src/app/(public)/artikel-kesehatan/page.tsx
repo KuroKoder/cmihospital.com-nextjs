@@ -1,3 +1,6 @@
+// pages/artikel-kesehatan/index.tsx (if using Pages Router)
+// OR app/artikel-kesehatan/page.tsx (if using App Router)
+
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
@@ -6,7 +9,8 @@ import {
   ArrowLongRightIcon,
   EyeIcon,
   FireIcon,
-  StarIcon
+  StarIcon,
+  ExclamationTriangleIcon
 } from "@heroicons/react/24/outline";
 import { 
   EyeIcon as EyeSolidIcon,
@@ -14,42 +18,55 @@ import {
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import Head from "next/head";
-import MainLayout from "../../../components/layout/main-layout";
 
 // Import components
-import SearchSection from "../../../components/public/articles/SearchSection";
-import FilterControls from "../../../components/public/articles/FilterControls";
-import ArticleCard from "../../../components/public/articles/ArticleCard";
-import Pagination from "../../../components/public/articles/Pagination";
-import NewsletterSection from "../../../components/public/articles/NewsletterSection";
+import SearchSection from "@/components/public/articles/SearchSection";
+import FilterControls from "@/components/public/articles/FilterControls";
+import ArticleCard from "@/components/public/articles/ArticleCard";
+import Pagination from "@/components/public/articles/Pagination";
+import NewsletterSection from "@/components/public/articles/NewsletterSection";
+import MainLayout from "@/components/layout/main-layout";
 
-// Import data and types
-import { CATEGORIES, ARTICLES } from "../../../data/articles";
-import { Article, FilterState } from "../../../types/article";
-import {
-  filterArticles,
-  getFeaturedArticles,
-  scrollToElement,
-} from "../../../utils/articleUtils";
+// Import API and types
+import { fetchArticles, fetchCategories } from "@/lib/api/strapi";
+import { Article, Category, ArticleFilters, SortBy, PaginationMeta } from "@/types/article";
+import { formatDate, getRelativeTime } from "@/utils/articleUtils";
 
 const ARTICLES_PER_PAGE = 6;
 
-// Component untuk Popular Article Card
+// Loading skeleton component
+const ArticleCardSkeleton = () => (
+  <div className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse">
+    <div className="h-48 bg-gray-200" />
+    <div className="p-5">
+      <div className="h-4 bg-gray-200 rounded mb-2" />
+      <div className="h-4 bg-gray-200 rounded w-2/3 mb-4" />
+      <div className="h-3 bg-gray-200 rounded w-1/2 mb-2" />
+      <div className="h-3 bg-gray-200 rounded w-1/3" />
+    </div>
+  </div>
+);
+
+// Error component
+const ErrorDisplay = ({ message, onRetry }: { message: string; onRetry: () => void }) => (
+  <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+    <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mx-auto mb-4" />
+    <h3 className="text-lg font-semibold text-red-800 mb-2">Terjadi Kesalahan</h3>
+    <p className="text-red-600 mb-4">{message}</p>
+    <button
+      onClick={onRetry}
+      className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+    >
+      Coba Lagi
+    </button>
+  </div>
+);
+
+// Popular Article Card Component
 const PopularArticleCard: React.FC<{
   article: Article;
   rank: number;
-  categories: typeof CATEGORIES;
-}> = ({ article, rank, categories }) => {
-  const categoryName = categories.find((cat) => cat.id === article.category)?.name || "Artikel";
-  
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
-
+}> = ({ article, rank }) => {
   const getRankStyle = (rank: number) => {
     switch (rank) {
       case 1:
@@ -73,22 +90,30 @@ const PopularArticleCard: React.FC<{
   return (
     <Link href={`/artikel-kesehatan/${article.slug}`} className="group block">
       <article className="relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
+        {/* Rank Badge */}
+        <div className="absolute top-4 right-4 z-10">
+          <div className={`${getRankStyle(rank)} px-3 py-1.5 rounded-full flex items-center space-x-1 shadow-lg`}>
+            {getRankIcon(rank)}
+            <span className="text-sm font-bold">#{rank}</span>
+          </div>
+        </div>
 
         {/* Image Container */}
         <div className="relative h-56 overflow-hidden">
           <img
-            src={article.image || "/api/placeholder/600/400"}
+            src={article.image}
             alt={article.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
           />
           
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
           
           {/* Category Badge on Image */}
           <div className="absolute bottom-4 left-4">
             <span className="inline-flex items-center px-3 py-1.5 bg-white/90 backdrop-blur-sm text-green-800 text-sm font-semibold rounded-full shadow-lg">
-              {categoryName}
+              {article.categoryName}
             </span>
           </div>
         </div>
@@ -110,7 +135,7 @@ const PopularArticleCard: React.FC<{
             <div className="flex items-center gap-3">
               <span className="font-medium text-gray-700">{article.author}</span>
               <span>•</span>
-              <span>{formatDate(article.date)}</span>
+              <span>{getRelativeTime(article.date)}</span>
             </div>
             <span className="bg-gray-100 px-2 py-1 rounded-full text-xs font-medium">
               {article.readTime}
@@ -119,14 +144,6 @@ const PopularArticleCard: React.FC<{
 
           {/* Action Row */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            {/* Views with trend indicator */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 text-gray-600">
-                <FireIcon className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">{article.views.toLocaleString()} views</span>
-              </div>
-            </div>
-
             {/* Read More */}
             <div className="flex items-center text-green-600 font-semibold group-hover:text-green-700 transition-colors">
               <span className="text-sm">Baca Artikel</span>
@@ -136,116 +153,161 @@ const PopularArticleCard: React.FC<{
         </div>
 
         {/* Hover Effect Border */}
-        <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-green-200 transition-colors duration-300 pointer-events-none"></div>
+        <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-green-200 transition-colors duration-300 pointer-events-none" />
       </article>
     </Link>
   );
 };
 
 const ArtikelKesehatan: React.FC = () => {
-  const [filterState, setFilterState] = useState<FilterState>({
-    selectedCategory: "all",
-    searchQuery: "",
-    sortBy: "newest",
-    showFilters: false,
-    currentPage: 1,
+  // State management
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [pagination, setPagination] = useState<PaginationMeta>({
+    page: 1,
+    pageSize: ARTICLES_PER_PAGE,
+    pageCount: 0,
+    total: 0
+  });
+  
+  const [filters, setFilters] = useState<ArticleFilters>({
+    category: 'all',
+    search: '',
+    sortBy: 'newest',
+    page: 1,
+    pageSize: ARTICLES_PER_PAGE
   });
 
-  // Memoized filtered articles untuk optimasi performa
-  const filteredArticles = useMemo(() => {
-    return filterArticles(
-      ARTICLES,
-      filterState.selectedCategory,
-      filterState.searchQuery,
-      filterState.sortBy
-    );
-  }, [
-    filterState.selectedCategory,
-    filterState.searchQuery,
-    filterState.sortBy,
-  ]);
+  const [uiState, setUiState] = useState({
+    showFilters: false,
+    isLoading: true,
+    isLoadingCategories: true,
+    error: null as string | null
+  });
 
-  // Memoized popular articles - diurutkan berdasarkan views
-  const popularArticles = useMemo(() => {
-    return [...ARTICLES]
-      .sort((a, b) => b.views - a.views)
-      .slice(0, 6); // Ambil 6 artikel terpopuler
-  }, []);
+  // Popular articles state
+  const [popularArticles, setPopularArticles] = useState<Article[]>([]);
 
-  // Reset halaman ke 1 ketika filter berubah
+  // Load categories on component mount
   useEffect(() => {
-    setFilterState((prev) => ({ ...prev, currentPage: 1 }));
-  }, [
-    filterState.selectedCategory,
-    filterState.searchQuery,
-    filterState.sortBy,
-  ]);
-
-  // Memoized pagination calculations
-  const paginationData = useMemo(() => {
-    const indexOfLastArticle = filterState.currentPage * ARTICLES_PER_PAGE;
-    const indexOfFirstArticle = indexOfLastArticle - ARTICLES_PER_PAGE;
-    const currentArticles = filteredArticles.slice(
-      indexOfFirstArticle,
-      indexOfLastArticle
-    );
-    const totalPages = Math.ceil(filteredArticles.length / ARTICLES_PER_PAGE);
-
-    return {
-      currentArticles,
-      totalPages,
-      indexOfFirstArticle,
-      indexOfLastArticle,
+    const loadCategories = async () => {
+      try {
+        setUiState(prev => ({ ...prev, isLoadingCategories: true }));
+        const categoriesData = await fetchCategories();
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      } finally {
+        setUiState(prev => ({ ...prev, isLoadingCategories: false }));
+      }
     };
-  }, [filteredArticles, filterState.currentPage]);
 
-  // Memoized featured articles
-  const featuredArticles = useMemo(() => {
-    return getFeaturedArticles(ARTICLES);
+    loadCategories();
   }, []);
 
-  // Handler functions dengan useCallback untuk optimasi
+  // Load articles when filters change
+  useEffect(() => {
+    const loadArticles = async () => {
+      try {
+        setUiState(prev => ({ ...prev, isLoading: true, error: null }));
+        
+        const { articles: articlesData, pagination: paginationData } = await fetchArticles(filters);
+        
+        setArticles(articlesData);
+        setPagination(paginationData);
+
+        // Load popular articles only on first load (no filters)
+        if (filters.category === 'all' && !filters.search && filters.page === 1) {
+          const popularData = await fetchArticles({ 
+            sortBy: 'popular', 
+            pageSize: 6 
+          });
+          setPopularArticles(popularData.articles);
+        }
+
+      } catch (error) {
+        console.error('Error loading articles:', error);
+        setUiState(prev => ({ 
+          ...prev, 
+          error: 'Gagal memuat artikel. Silakan coba lagi.' 
+        }));
+      } finally {
+        setUiState(prev => ({ ...prev, isLoading: false }));
+      }
+    };
+
+    loadArticles();
+  }, [filters]);
+
+  // Handler functions
   const handleSearchChange = useCallback((query: string) => {
-    setFilterState((prev) => ({ ...prev, searchQuery: query }));
+    setFilters(prev => ({ 
+      ...prev, 
+      search: query, 
+      page: 1 
+    }));
   }, []);
 
   const handleCategoryChange = useCallback((category: string) => {
-    setFilterState((prev) => ({ ...prev, selectedCategory: category }));
+    setFilters(prev => ({ 
+      ...prev, 
+      category, 
+      page: 1 
+    }));
   }, []);
 
-  const handleSortChange = useCallback((sortBy: FilterState["sortBy"]) => {
-    setFilterState((prev) => ({ ...prev, sortBy }));
+  const handleSortChange = useCallback((sortBy: SortBy) => {
+    setFilters(prev => ({ 
+      ...prev, 
+      sortBy, 
+      page: 1 
+    }));
   }, []);
 
   const handleToggleFilters = useCallback(() => {
-    setFilterState((prev) => ({ ...prev, showFilters: !prev.showFilters }));
+    setUiState(prev => ({ 
+      ...prev, 
+      showFilters: !prev.showFilters 
+    }));
   }, []);
 
   const handlePageChange = useCallback((pageNumber: number) => {
-    setFilterState((prev) => ({ ...prev, currentPage: pageNumber }));
+    setFilters(prev => ({ ...prev, page: pageNumber }));
+    
+    // Scroll to articles section
     setTimeout(() => {
-      scrollToElement("articles-section");
+      const element = document.getElementById('articles-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }, 100);
   }, []);
 
   const handleResetSearch = useCallback(() => {
-    setFilterState((prev) => ({
-      ...prev,
-      searchQuery: "",
-      selectedCategory: "all",
-      currentPage: 1,
-    }));
+    setFilters({
+      category: 'all',
+      search: '',
+      sortBy: 'newest',
+      page: 1,
+      pageSize: ARTICLES_PER_PAGE
+    });
   }, []);
+
+  const retryLoad = useCallback(() => {
+    setFilters(prev => ({ ...prev })); // Trigger reload
+  }, []);
+
+  // Computed values
+  const shouldShowPopularArticles = 
+    filters.search === '' && 
+    filters.category === 'all' && 
+    popularArticles.length > 0 &&
+    !uiState.isLoading;
 
   const getCategoryName = useCallback((categoryId: string) => {
-    return (
-      CATEGORIES.find((cat) => cat.id === categoryId)?.name || "Semua Artikel"
-    );
-  }, []);
-
-  // Show featured articles only when no search/filter applied
-  const shouldShowFeaturedArticles =
-    filterState.searchQuery === "" && filterState.selectedCategory === "all";
+    const category = categories.find(cat => cat.id === categoryId);
+    return category?.name || "Semua Artikel";
+  }, [categories]);
 
   return (
     <MainLayout>
@@ -259,57 +321,26 @@ const ArtikelKesehatan: React.FC = () => {
           name="keywords"
           content="artikel kesehatan, tips kesehatan, informasi medis, klinik cmi, kesehatan ibu anak, gizi, penyakit, kesehatan mental"
         />
-        <meta
-          property="og:title"
-          content="Artikel Kesehatan Terbaru 2025 - Klinik Utama CMI"
-        />
-        <meta
-          property="og:description"
-          content="Informasi dan tips kesehatan terkini dari tim dokter Klinik Utama CMI"
-        />
+        <meta property="og:title" content="Artikel Kesehatan Terbaru 2025 - Klinik Utama CMI" />
+        <meta property="og:description" content="Informasi dan tips kesehatan terkini dari tim dokter Klinik Utama CMI" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://klinikutamacmi.com/artikel" />
-        <meta
-          property="og:image"
-          content="https://klinikutamacmi.com/images/artikel-banner.jpg"
-        />
-        <link rel="canonical" href="https://klinikutamacmi.com/artikel" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            headline: "Artikel Kesehatan Terbaru - Klinik Utama CMI",
-            description:
-              "Temukan informasi dan tips kesehatan terkini dari tim dokter Klinik Utama CMI.",
-            url: "https://klinikutamacmi.com/artikel",
-            publisher: {
-              "@type": "Organization",
-              name: "Klinik Utama CMI",
-              logo: {
-                "@type": "ImageObject",
-                url: "https://klinikutamacmi.com/images/logo.png",
-              },
-            },
-          })}
-        </script>
+        <meta property="og:url" content="https://cmihospital.com/artikel-kesehatan" />
+        <link rel="canonical" href="https://cmihospital.com/artikel-kesehatan" />
       </Head>
 
       <main className="bg-white min-h-screen pt-28 pb-16">
         {/* Hero Section with Search */}
         <SearchSection
-          searchQuery={filterState.searchQuery}
+          searchQuery={filters.search || ''}
           onSearchChange={handleSearchChange}
-          showFilters={filterState.showFilters}
+          showFilters={uiState.showFilters}
           onToggleFilters={handleToggleFilters}
         />
 
         <div className="container mx-auto px-4">
-          {/* Popular Articles Section - Enhanced */}
-          {shouldShowFeaturedArticles && popularArticles.length > 0 && (
-            <section
-              className="mb-16"
-              aria-labelledby="popular-articles-title"
-            >
+          {/* Popular Articles Section */}
+          {shouldShowPopularArticles && (
+            <section className="mb-16" aria-labelledby="popular-articles-title">
               {/* Section Header */}
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-full mb-4">
@@ -317,10 +348,7 @@ const ArtikelKesehatan: React.FC = () => {
                   <span className="text-red-600 font-semibold text-sm">Trending Sekarang</span>
                 </div>
                 
-                <h2
-                  id="popular-articles-title"
-                  className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4"
-                >
+                <h2 id="popular-articles-title" className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                   Artikel <span className="text-green-600">Terpopuler</span>
                 </h2>
                 
@@ -333,88 +361,61 @@ const ArtikelKesehatan: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {popularArticles.map((article, index) => (
                   <PopularArticleCard
-                    key={article.id}
+                    key={article.documentId}
                     article={article}
                     rank={index + 1}
-                    categories={CATEGORIES}
                   />
                 ))}
               </div>
-
-          
             </section>
           )}
 
-          {/* Featured Articles Section
-          {shouldShowFeaturedArticles && featuredArticles.length > 0 && (
-            <section
-              className="mb-12"
-              aria-labelledby="featured-articles-title"
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2
-                  id="featured-articles-title"
-                  className="text-2xl font-bold text-gray-900"
-                >
-                  Artikel Unggulan
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featuredArticles.map((article) => (
-                  <ArticleCard
-                    key={article.id}
-                    article={article}
-                    categories={CATEGORIES}
-                    showFeaturedBadge={true}
-                  />
-                ))}
-              </div>
-            </section>
-          )} */}
-
           {/* Filter Controls */}
           <FilterControls
-            categories={CATEGORIES}
-            selectedCategory={filterState.selectedCategory}
+            categories={categories}
+            selectedCategory={filters.category || 'all'}
             onCategoryChange={handleCategoryChange}
-            sortBy={filterState.sortBy}
+            sortBy={filters.sortBy}
             onSortChange={handleSortChange}
-            showFilters={filterState.showFilters}
+            showFilters={uiState.showFilters}
             onToggleFilters={handleToggleFilters}
+            isLoading={uiState.isLoadingCategories}
           />
 
           {/* Article Results */}
-          <section
-            id="articles-section"
-            className="mb-12"
-            aria-labelledby="articles-title"
-          >
+          <section id="articles-section" className="mb-12" aria-labelledby="articles-title">
             <div className="flex justify-between items-center mb-6">
-              <h2
-                id="articles-title"
-                className="text-2xl font-bold text-gray-900"
-              >
-                {getCategoryName(filterState.selectedCategory)}
+              <h2 id="articles-title" className="text-2xl font-bold text-gray-900">
+                {getCategoryName(filters.category || 'all')}
               </h2>
               <p className="text-gray-600 text-sm" aria-live="polite">
-                {filteredArticles.length} artikel ditemukan
+                {uiState.isLoading ? "Memuat..." : `${pagination.total} artikel ditemukan`}
               </p>
             </div>
 
+            {/* Error State */}
+            {uiState.error && (
+              <ErrorDisplay 
+                message={uiState.error} 
+                onRetry={retryLoad}
+              />
+            )}
+
+            {/* Loading State */}
+            {uiState.isLoading && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {[...Array(6)].map((_, index) => (
+                  <ArticleCardSkeleton key={index} />
+                ))}
+              </div>
+            )}
+
             {/* No Results */}
-            {filteredArticles.length === 0 && (
-              <div
-                className="bg-white rounded-lg shadow-md p-8 text-center"
-                role="status"
-                aria-live="polite"
-              >
-                <img
-                  src="/images/no-results.svg"
-                  alt=""
-                  className="w-32 h-32 mx-auto mb-4 opacity-70"
-                  aria-hidden="true"
-                />
+            {!uiState.isLoading && !uiState.error && articles.length === 0 && (
+              <div className="bg-white rounded-lg shadow-md p-8 text-center" role="status" aria-live="polite">
+                <div className="w-32 h-32 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <BookmarkIcon className="w-16 h-16 text-gray-400" />
+                </div>
                 <p className="text-lg text-gray-700 mb-2 font-medium">
                   Tidak ada artikel yang ditemukan
                 </p>
@@ -432,24 +433,26 @@ const ArtikelKesehatan: React.FC = () => {
             )}
 
             {/* Articles Grid */}
-            {paginationData.currentArticles.length > 0 && (
+            {!uiState.isLoading && !uiState.error && articles.length > 0 && (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {paginationData.currentArticles.map((article) => (
+                  {articles.map((article) => (
                     <ArticleCard
-                      key={article.id}
+                      key={article.documentId}
                       article={article}
-                      categories={CATEGORIES}
+                      showFeaturedBadge={true}
                     />
                   ))}
                 </div>
 
                 {/* Pagination */}
-                {paginationData.totalPages > 1 && (
+                {pagination.pageCount > 1 && (
                   <Pagination
-                    currentPage={filterState.currentPage}
-                    totalPages={paginationData.totalPages}
+                    currentPage={pagination.page}
+                    totalPages={pagination.pageCount}
                     onPageChange={handlePageChange}
+                    pagination={pagination}
+                    isLoading={uiState.isLoading}
                   />
                 )}
               </>

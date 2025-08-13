@@ -41,14 +41,14 @@ export const consultationSpecialists: ConsultationSpecialist[] = [
       "Edukasi gagal ginjal",
     ],
     whatsapp: {
-      number: "6281234567890",
+      number: "628122771053",
       message: `Halo, saya ingin mendapatkan informasi mengenai kesehatan ginjal dari Tim Informasi Ginjal.
 
 Mohon informasi:
 - Jadwal konsultasi yang tersedia
 - Biaya konsultasi
 - Persiapan yang diperlukan
-
+Sumber: cmihospital.com
 Terima kasih.`
     },
   },
@@ -73,7 +73,7 @@ Terima kasih.`
       "Konsultasi nutrisi kanker",
     ],
     whatsapp: {
-      number: "6281234567891",
+      number: "628119161166",
       message: `Halo, saya ingin mendapatkan informasi mengenai kesehatan kanker dari Tim Informasi Kanker.
 
 Mohon informasi:
@@ -81,7 +81,7 @@ Mohon informasi:
 - Prosedur konsultasi
 - Biaya pemeriksaan
 - Persiapan dokumen medis
-
+Sumber: cmihospital.com
 Terima kasih.`
     },
   },
@@ -107,7 +107,7 @@ Terima kasih.`
       "Mencegah risiko terjadinya komplikasi penyakit jantung serta tindakan operasi pemasangan ring dan bypass ulang",
     ],
     whatsapp: {
-      number: "6281234567892",
+      number: "6281324335676",
       message: `Halo, saya ingin mendapatkan informasi mengenai kesehatan jantung dari Tim Informasi Jantung.
 
 Mohon informasi:
@@ -115,7 +115,7 @@ Mohon informasi:
 - Jenis pemeriksaan yang diperlukan
 - Biaya konsultasi dan pemeriksaan
 - Persiapan sebelum konsultasi
-
+Sumber: cmihospital.com
 Terima kasih.`
     },
   },
@@ -142,7 +142,7 @@ Terima kasih.`
       "Minim efek samping dan mencegah terjadinya komplikasi penyakit",
     ],
     whatsapp: {
-      number: "6281234567893",
+      number: "628126398300",
       message: `Halo, saya ingin mendapatkan informasi mengenai diabetes dari Tim Informasi Diabetes.
 
 Mohon informasi:
@@ -150,7 +150,7 @@ Mohon informasi:
 - Pemeriksaan laboratorium yang diperlukan
 - Biaya konsultasi
 - Tips kontrol gula darah
-
+Sumber: cmihospital.com
 Terima kasih.`
     },
   }

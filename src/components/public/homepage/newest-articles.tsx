@@ -1,27 +1,92 @@
 "use client";
 import { ArrowRight, User, Calendar, Clock } from "lucide-react";
-import { ARTICLES, CATEGORIES } from "@/data/articles";
 import Link from "next/link";
 import ArticleCard from "@/components/public/articles/ArticleCard";
+import { useState, useEffect } from "react";
+import { fetchFeaturedArticles, fetchCategories } from "@/lib/api/strapi";
+import { Article, Category } from "@/types/article";
 
 // Komponen utama
 export default function HealthArticlesSection() {
-  // Ambil 3 artikel terbaru berdasarkan tanggal
-  const latestArticles = ARTICLES
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 3);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mengatur artikel featured berdasarkan views terbanyak
-  const featuredArticles = ARTICLES
-    .filter((article) => article.isFeatured)
-    .sort((a, b) => b.views - a.views);
-  const latestArticle = featuredArticles[0] || ARTICLES[0];
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [fetchedArticles, fetchedCategories] = await Promise.all([
+          fetchFeaturedArticles(6), // Get 6 articles for display
+          fetchCategories()
+        ]);
+        
+        setArticles(fetchedArticles);
+        setCategories(fetchedCategories);
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError('Gagal memuat artikel. Silakan coba lagi nanti.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Handle tab change
-  const handleReadMore = (slug: string) => {
-    // Navigasi ke detail artikel akan ditambahkan di sini
-    console.log('Navigate to:', `/artikel-kesehatan/${slug}`);
-  };
+    fetchData();
+  }, []);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="w-full bg-white">
+        <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+            <span className="ml-3 text-gray-600">Memuat artikel...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="w-full bg-white">
+        <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
+          <div className="text-center">
+            <div className="text-red-600 mb-4">{error}</div>
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Get latest articles (first 3)
+  const latestArticles = articles.slice(0, 3);
+  
+  // Get featured article (first one or fallback)
+  const latestArticle = articles.find(article => article.isFeatured) || articles[0];
+
+  // Handle case when no articles available
+  if (!latestArticle) {
+    return (
+      <div className="w-full bg-white">
+        <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
+          <div className="text-center text-gray-600">
+            Belum ada artikel tersedia.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Format tanggal
   const formatDate = (dateString: string) => {
@@ -85,11 +150,9 @@ export default function HealthArticlesSection() {
                   <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-900/70 to-transparent p-6">
                     <div className="flex items-center justify-between">
                       <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-md">
-                        {CATEGORIES.find(cat => cat.id === latestArticle.category)?.name || latestArticle.category}
+                        {latestArticle.categoryName}
                       </span>
-                      <span className="bg-white/90 text-green-800 text-xs px-2 py-1 rounded-md font-medium">
-                        {latestArticle.views.toLocaleString()} views
-                      </span>
+                      
                     </div>
                   </div>
                 </div>
@@ -122,16 +185,21 @@ export default function HealthArticlesSection() {
         </div>
 
         {/* Grid artikel - menggunakan ArticleCard component */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {latestArticles.map((article) => (
-            <ArticleCard
-              key={article.id}
-              article={article}
-              categories={CATEGORIES}
-              showFeaturedBadge={true}
-            />
-          ))}
-        </div>
+        {latestArticles.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {latestArticles.map((article) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                showFeaturedBadge={true}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-600 py-12">
+            Belum ada artikel terbaru tersedia.
+          </div>
+        )}
 
         {/* Call to Action Section */}
         <div className="mt-16 pt-12 border-t border-green-100">

@@ -2,23 +2,12 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, Eye } from "lucide-react";
-import { formatArticleDate, getImageUrl } from "@/utils/articleUtils";
-
-interface RelatedArticle {
-  id: string | number;
-  slug: string;
-  title: string;
-  description: string;
-  image: string;
-  readTime: string;
-  views: number;
-  author: string;
-  date: string;
-}
+import { Clock, Eye, Calendar, ArrowRight } from "lucide-react";
+import { formatDateShort } from "@/utils/articleUtils";
+import type { Article } from "@/types/article";
 
 interface RelatedArticlesProps {
-  articles: RelatedArticle[];
+  articles: Article[];
 }
 
 const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
@@ -26,8 +15,11 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
     return null;
   }
 
+  // Limit to 6 articles maximum
+  const displayedArticles = articles.slice(0, 6);
+
   return (
-    <section className="bg-gray-50 py-16">
+    <section className="bg-gray-50 py-16 rounded-2xl">
       <div className="container mx-auto px-6 md:px-10 lg:px-16">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
@@ -35,29 +27,37 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Artikel Terkait
             </h2>
-            <p className="text-gray-600">
-              Baca juga artikel kesehatan lainnya yang mungkin menarik untuk Anda
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Baca juga artikel kesehatan lainnya yang mungkin menarik untuk Anda. 
+              Dapatkan informasi lengkap untuk menjaga kesehatan optimal.
             </p>
           </div>
 
           {/* Articles Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayedArticles.map((article) => (
               <article
-                key={article.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                key={`${article.id}-${article.slug}`}
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group"
               >
                 {/* Article Image */}
-                <Link href={`/artikel-kesehatan/${article.slug}`}>
-                  <div className="relative h-48 overflow-hidden group">
+                <Link href={`/artikel-kesehatan/${article.slug}`} className="block">
+                  <div className="relative h-48 overflow-hidden">
                     <Image
-                      src={getImageUrl(article)}
+                      src={article.image || '/images/placeholder-article.jpg'}
                       alt={article.title}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-300 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Category Badge */}
+                    <div className="absolute top-3 left-3 bg-green-600 text-white px-3 py-1 text-xs font-medium rounded-full">
+                      {article.categoryName || 'Kesehatan'}
+                    </div>
                   </div>
                 </Link>
 
@@ -65,40 +65,43 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
                 <div className="p-6">
                   {/* Title */}
                   <Link href={`/artikel-kesehatan/${article.slug}`}>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 hover:text-green-600 transition-colors">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 hover:text-green-600 transition-colors group-hover:text-green-600">
                       {article.title}
                     </h3>
                   </Link>
 
                   {/* Description */}
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed">
                     {article.description}
                   </p>
 
                   {/* Meta Information */}
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         <span>{article.readTime}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        <span>{article.views.toLocaleString()}</span>
-                      </div>
+                      
                     </div>
                   </div>
 
                   {/* Author and Date */}
                   <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
-                    <span className="font-medium">{article.author}</span>
-                    <span>{formatArticleDate(article.date)}</span>
+                    <div className="flex items-center gap-1">
+                      <span className="font-medium text-gray-700">{article.author}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{formatDateShort(article.publishedAt || article.date)}</span>
+                    </div>
                   </div>
 
                   {/* Read More Button */}
                   <Link href={`/artikel-kesehatan/${article.slug}`}>
-                    <button className="w-full mt-4 py-2 text-sm font-medium text-green-600 border border-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-300">
-                      Baca Selengkapnya
+                    <button className="w-full mt-4 py-2.5 text-sm font-medium text-green-600 border border-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-all duration-300 group/btn flex items-center justify-center">
+                      <span>Baca Selengkapnya</span>
+                      <ArrowRight className="w-4 h-4 ml-2 transform group-hover/btn:translate-x-1 transition-transform" />
                     </button>
                   </Link>
                 </div>
@@ -106,14 +109,25 @@ const RelatedArticle: React.FC<RelatedArticlesProps> = ({ articles }) => {
             ))}
           </div>
 
+          {/* Show More Articles if there are more than 6 */}
+          {articles.length > 6 && (
+            <div className="mt-8 text-center">
+              <p className="text-gray-600 mb-4">
+                Dan {articles.length - 6} artikel terkait lainnya...
+              </p>
+            </div>
+          )}
+
           {/* View More Button */}
           <div className="text-center mt-12">
             <Link href="/artikel-kesehatan">
-              <button className="px-8 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-300">
-                Lihat Semua Artikel
+              <button className="inline-flex items-center px-8 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <span>Lihat Semua Artikel</span>
+                <ArrowRight className="w-5 h-5 ml-2" />
               </button>
             </Link>
           </div>
+
         </div>
       </div>
     </section>

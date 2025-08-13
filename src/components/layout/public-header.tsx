@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import {
   Menu,
@@ -82,9 +82,10 @@ const LAYANAN_KESEHATAN = [
 
 const NAVIGATION = [
   { name: "Fasilitas", href: "/fasilitas" },
-  { name: "Dokter", href: "/dokter" },
   { name: "Tentang Kami", href: "/tentang-kami" },
   { name: "Artikel Kesehatan", href: "/artikel-kesehatan" },
+  { name: "Testimoni", href: "/testimoni" },
+  { name: "FAQ", href: "/faq" },
 ] as const;
 
 // Types
@@ -97,28 +98,40 @@ interface MobileMenuProps {
   onClose: () => void;
 }
 
-// Components
+// Memoized Components
 const ContactInfo = ({ className = "" }: ContactInfoProps) => (
   <div className={`bg-green-700 text-white py-2 ${className}`}>
     <div className="container mx-auto px-4 lg:px-8 xl:px-12 2xl:px-16">
       <div className="flex flex-wrap justify-between items-center text-sm">
         <div className="flex items-center space-x-6">
           <div className="flex items-center">
-            <PhoneIcon className="h-4 w-4 mr-2" aria-hidden="true" />
-            <span>{CONTACT_INFO.phone}</span>
+            <PhoneIcon className="h-4 w-4 mr-2 flex-shrink-0" aria-hidden="true" />
+            <a 
+              href={`tel:${CONTACT_INFO.phone.replace(/\D/g, '')}`}
+              className="hover:underline transition-all duration-200"
+              aria-label={`Telepon ${CONTACT_INFO.phone}`}
+            >
+              {CONTACT_INFO.phone}
+            </a>
           </div>
           <div className="hidden md:flex items-center">
-            <EnvelopeIcon className="h-4 w-4 mr-2" aria-hidden="true" />
-            <span>{CONTACT_INFO.email}</span>
+            <EnvelopeIcon className="h-4 w-4 mr-2 flex-shrink-0" aria-hidden="true" />
+            <a 
+              href={`mailto:${CONTACT_INFO.email}`}
+              className="hover:underline transition-all duration-200"
+              aria-label={`Email ${CONTACT_INFO.email}`}
+            >
+              {CONTACT_INFO.email}
+            </a>
           </div>
         </div>
         <div className="flex items-center space-x-6">
           <div className="hidden md:flex items-center">
-            <ClockIcon className="h-4 w-4 mr-2" aria-hidden="true" />
+            <ClockIcon className="h-4 w-4 mr-2 flex-shrink-0" aria-hidden="true" />
             <span>{CONTACT_INFO.hours}</span>
           </div>
           <div className="flex items-center">
-            <MapPinIcon className="h-4 w-4 mr-2" aria-hidden="true" />
+            <MapPinIcon className="h-4 w-4 mr-2 flex-shrink-0" aria-hidden="true" />
             <span>{CONTACT_INFO.location}</span>
           </div>
         </div>
@@ -132,9 +145,11 @@ const ServiceDropdown = () => (
     {({ open }) => (
       <>
         <PopoverButton
-          className={`group inline-flex items-center gap-x-1 text-sm font-medium text-gray-800 outline-none transition-colors ${
+          className={`group inline-flex items-center gap-x-1 text-sm font-medium text-gray-800 outline-none transition-colors focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded-md px-2 py-1 ${
             open ? "text-green-700" : "hover:text-green-700"
           }`}
+          aria-expanded={open}
+          aria-haspopup="menu"
         >
           Layanan Kesehatan
           <ChevronDownIcon
@@ -145,20 +160,20 @@ const ServiceDropdown = () => (
           />
         </PopoverButton>
 
-        <PopoverPanel className="absolute left-0 top-full z-10 w-80 rounded-xl bg-white shadow-lg ring-1 ring-gray-200">
+        <PopoverPanel className="absolute left-0 top-full z-10 w-80 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200">
           <div className="p-1">
             {LAYANAN_KESEHATAN.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="group flex items-center gap-x-3 rounded-lg p-3 text-sm hover:bg-green-50 transition-colors"
+                className="group flex items-center gap-x-3 rounded-lg p-3 text-sm hover:bg-green-50 focus:bg-green-50 focus:outline-none transition-colors"
               >
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50 text-green-600 group-hover:bg-green-100 transition-colors flex-shrink-0">
                   <item.icon className="h-5 w-5" aria-hidden="true" />
                 </div>
-                <div>
-                  <div className="font-medium text-gray-900">{item.name}</div>
-                  <p className="text-xs text-gray-500">{item.description}</p>
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-gray-900 truncate">{item.name}</div>
+                  <p className="text-xs text-gray-500 line-clamp-2">{item.description}</p>
                 </div>
               </Link>
             ))}
@@ -167,16 +182,16 @@ const ServiceDropdown = () => (
             <div className="flex gap-x-5">
               <Link
                 href="/jadwal"
-                className="flex items-center text-sm font-medium text-green-700 hover:text-green-800 transition-colors"
+                className="flex items-center text-sm font-medium text-green-700 hover:text-green-800 focus:text-green-800 focus:outline-none transition-colors"
               >
-                <CalendarIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+                <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" aria-hidden="true" />
                 Jadwalkan Kunjungan
               </Link>
               <Link
                 href="/kontak"
-                className="flex items-center text-sm font-medium text-green-700 hover:text-green-800 transition-colors"
+                className="flex items-center text-sm font-medium text-green-700 hover:text-green-800 focus:text-green-800 focus:outline-none transition-colors"
               >
-                <PhoneIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+                <PhoneIcon className="mr-2 h-4 w-4 flex-shrink-0" aria-hidden="true" />
                 Hubungi Kami
               </Link>
             </div>
@@ -190,10 +205,35 @@ const ServiceDropdown = () => (
 const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
   const pathname = usePathname();
 
+  // Prevent scroll when mobile menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="lg:hidden fixed inset-0 z-50">
+    <div className="lg:hidden fixed inset-0 z-50" role="dialog" aria-modal="true">
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/30 backdrop-blur-sm"
@@ -220,7 +260,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="rounded-md p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
             aria-label="Tutup menu"
           >
             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -231,32 +271,44 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
         <div className="bg-green-50 rounded-lg p-4 mb-6">
           <div className="space-y-3 text-sm">
             <div className="flex items-center">
-              <PhoneIcon className="h-5 w-5 text-green-600 mr-3" aria-hidden="true" />
-              <span className="text-black">{CONTACT_INFO.phone}</span>
+              <PhoneIcon className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" aria-hidden="true" />
+              <a 
+                href={`tel:${CONTACT_INFO.phone.replace(/\D/g, '')}`}
+                className="text-black hover:text-green-700 transition-colors"
+                onClick={onClose}
+              >
+                {CONTACT_INFO.phone}
+              </a>
             </div>
             <div className="flex items-center">
-              <EnvelopeIcon className="h-5 w-5 text-green-600 mr-3" aria-hidden="true" />
-              <span className="text-black">{CONTACT_INFO.email}</span>
+              <EnvelopeIcon className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" aria-hidden="true" />
+              <a 
+                href={`mailto:${CONTACT_INFO.email}`}
+                className="text-black hover:text-green-700 transition-colors break-all"
+                onClick={onClose}
+              >
+                {CONTACT_INFO.email}
+              </a>
             </div>
-            <div className="flex items-center">
-              <ClockIcon className="h-5 w-5 text-green-600 mr-3" aria-hidden="true" />
+            <div className="flex items-start">
+              <ClockIcon className="h-5 w-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" aria-hidden="true" />
               <span className="text-black">{CONTACT_INFO.hours}</span>
             </div>
             <div className="flex items-center">
-              <MapPinIcon className="h-5 w-5 text-green-600 mr-3" aria-hidden="true" />
+              <MapPinIcon className="h-5 w-5 text-green-600 mr-3 flex-shrink-0" aria-hidden="true" />
               <span className="text-black">{CONTACT_INFO.location}</span>
             </div>
           </div>
         </div>
 
         {/* Mobile navigation links */}
-        <div className="space-y-6">
+        <nav className="space-y-6" role="navigation" aria-label="Menu navigasi mobile">
           {/* Layanan Kesehatan */}
           <Menu>
             {({ open }) => (
               <div>
                 <div className="border-b border-gray-200 pb-3">
-                  <MenuButton className="flex w-full items-center justify-between text-base font-medium text-gray-900">
+                  <MenuButton className="flex w-full items-center justify-between text-base font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 rounded-md px-2 py-1">
                     Layanan Kesehatan
                     <ChevronDownIcon
                       className={`h-5 w-5 text-gray-500 transition-transform duration-200 ${
@@ -272,10 +324,10 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                           <Link
                             href={item.href}
                             onClick={onClose}
-                            className="flex items-center py-2 pl-4 text-base text-gray-700 hover:text-green-700 transition-colors"
+                            className="flex items-center py-2 pl-4 text-base text-gray-700 hover:text-green-700 focus:text-green-700 focus:outline-none transition-colors rounded-md"
                           >
-                            <item.icon className="mr-3 h-5 w-5 text-green-600" aria-hidden="true" />
-                            {item.name}
+                            <item.icon className="mr-3 h-5 w-5 text-green-600 flex-shrink-0" aria-hidden="true" />
+                            <span className="truncate">{item.name}</span>
                           </Link>
                         </MenuItem>
                       ))}
@@ -293,7 +345,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center border-b border-gray-200 py-3 text-base font-medium transition-colors ${
+                className={`flex items-center border-b border-gray-200 py-3 text-base font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 rounded-md px-2 ${
                   pathname === item.href
                     ? "text-green-700 font-semibold"
                     : "text-gray-900 hover:text-green-700"
@@ -309,29 +361,29 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
             <Link
               href="/jadwal"
               onClick={onClose}
-              className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
             >
-              <CalendarIcon className="mr-2 h-5 w-5" aria-hidden="true" />
+              <CalendarIcon className="mr-2 h-5 w-5 flex-shrink-0" aria-hidden="true" />
               Jadwalkan Kunjungan
             </Link>
             <Link
               href="/kontak"
               onClick={onClose}
-              className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-gray-50 transition-colors"
+              className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
             >
-              <PhoneIcon className="mr-2 h-5 w-5" aria-hidden="true" />
+              <PhoneIcon className="mr-2 h-5 w-5 flex-shrink-0" aria-hidden="true" />
               Hubungi Kami
             </Link>
             <Link
               href="/daftar-online"
               onClick={onClose}
-              className="flex w-full items-center justify-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+              className="flex w-full items-center justify-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 focus:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
             >
               Daftar Online
               <span className="ml-2" aria-hidden="true">→</span>
             </Link>
           </div>
-        </div>
+        </nav>
       </div>
     </div>
   );
@@ -343,9 +395,13 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
+  // Throttled scroll handler for better performance
   const handleScroll = useCallback(() => {
-    setIsScrolled(window.scrollY > 10);
-  }, []);
+    const scrolled = window.scrollY > 10;
+    if (scrolled !== isScrolled) {
+      setIsScrolled(scrolled);
+    }
+  }, [isScrolled]);
 
   const closeMobileMenu = useCallback(() => {
     setMobileMenuOpen(false);
@@ -355,15 +411,44 @@ export default function Header() {
     setMobileMenuOpen(true);
   }, []);
 
+  // Debounced scroll handler
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    let ticking = false;
+    
+    const scrollHandler = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", scrollHandler, { passive: true });
+    return () => window.removeEventListener("scroll", scrollHandler);
   }, [handleScroll]);
 
   // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
+
+  // Memoize navigation items to prevent re-renders
+  const navigationItems = useMemo(() => 
+    NAVIGATION.map((item) => (
+      <Link
+        key={item.name}
+        href={item.href}
+        className={`text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 rounded-md px-2 py-1 ${
+          pathname === item.href
+            ? "text-green-700 font-semibold"
+            : "text-gray-800 hover:text-green-700"
+        }`}
+      >
+        {item.name}
+      </Link>
+    )), [pathname]);
 
   return (
     <header
@@ -378,11 +463,13 @@ export default function Header() {
         className={`relative container mx-auto px-4 lg:px-8 xl:px-12 2xl:px-16 transition-all duration-300 ${
           isScrolled ? "py-3" : "py-4"
         }`}
+        role="navigation"
+        aria-label="Navigasi utama"
       >
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center group">
+            <Link href="/" className="flex items-center group focus:outline-none focus:ring-2 focus:ring-green-500 rounded-md p-1">
               <Image
                 src="/images/logo/logo.svg"
                 alt="Klinik Utama CMI"
@@ -402,8 +489,9 @@ export default function Header() {
             <button
               type="button"
               onClick={openMobileMenu}
-              className="inline-flex items-center justify-center rounded-md p-2 text-green-800 hover:text-green-600 hover:bg-green-50 transition-colors"
+              className="inline-flex items-center justify-center rounded-md p-2 text-green-800 hover:text-green-600 hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
               aria-label="Buka menu utama"
+              aria-expanded={mobileMenuOpen}
             >
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
@@ -413,21 +501,7 @@ export default function Header() {
           <div className="hidden lg:flex lg:items-center lg:justify-between lg:flex-1 lg:ml-12">
             <PopoverGroup className="flex gap-x-8">
               <ServiceDropdown />
-
-              {/* Standard navigation links */}
-              {NAVIGATION.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`text-sm font-medium transition-colors ${
-                    pathname === item.href
-                      ? "text-green-700 font-semibold"
-                      : "text-gray-800 hover:text-green-700"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigationItems}
             </PopoverGroup>
 
             {/* CTA Button */}

@@ -71,23 +71,8 @@ const SearchSection: React.FC<SearchSectionProps> = ({
                 aria-label="Cari artikel"
               />
               <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
-              <button
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 bg-green-600 rounded-full hover:bg-green-700 w-10 h-10 flex items-center justify-center"
-                onClick={onToggleFilters}
-                aria-label="Toggle filters"
-              >
-                <AdjustmentsHorizontalIcon className="h-5 w-5 text-white" />
-              </button>
             </div>
           </div>
-          {showFilters && (
-            <div className="mt-8 max-w-4xl mx-auto bg-white text-gray-800 p-6 rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold mb-4">Filter Artikel</h2>
-              <p className="text-sm text-gray-600">
-                (Di sini nanti bisa ditambahkan filter berdasarkan kategori, tanggal, atau penulis.)
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </section>

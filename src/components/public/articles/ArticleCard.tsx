@@ -1,77 +1,135 @@
-// components/ArticleCard.tsx
+// components/public/articles/ArticleCard.tsx
 import React from "react";
 import Link from "next/link";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import { Article, Category } from "../../../types/article";
-import { formatDate } from "../../../utils/articleUtils";
+import { ChevronRightIcon, ClockIcon } from "@heroicons/react/24/outline";
+import { Article } from "@/types/article";
+import { formatDate, getRelativeTime } from "@/utils/articleUtils";
 
 interface ArticleCardProps {
   article: Article;
-  categories: Category[];
   showFeaturedBadge?: boolean;
+  variant?: 'default' | 'compact' | 'featured';
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
   article,
-  categories,
-  showFeaturedBadge = false,
+  variant = 'default',
 }) => {
-  const categoryName =
-    categories.find((cat) => cat.id === article.category)?.name || "Artikel";
+  // Handle image error
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = '/images/placeholder-article.jpg';
+  };
+
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'compact':
+        return 'bg-white rounded-lg shadow-sm hover:shadow-md';
+      case 'featured':
+        return 'bg-white rounded-xl shadow-lg hover:shadow-xl border border-gray-100';
+      default:
+        return 'bg-white rounded-xl shadow-md hover:shadow-lg';
+    }
+  };
+
+  const getImageHeight = () => {
+    switch (variant) {
+      case 'compact':
+        return 'h-32';
+      case 'featured':
+        return 'h-56';
+      default:
+        return 'h-48';
+    }
+  };
 
   return (
-    <article className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow group relative">
-      {showFeaturedBadge && article.isFeatured && (
-        <div className="absolute top-4 right-4 z-10">
-          <span className="bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-            Unggulan
-          </span>
-        </div>
-      )}
-
+    <article className={`${getVariantClasses()} overflow-hidden transition-all duration-300 group relative hover:-translate-y-1`}>
       <Link href={`/artikel-kesehatan/${article.slug}`} className="block">
-        <div className="relative h-48 overflow-hidden">
+        {/* Image Section */}
+        <div className={`relative ${getImageHeight()} overflow-hidden`}>
           <img
-            src={article.image || "/api/placeholder/600/400"}
+            src={article.image}
             alt={article.title}
-            className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+            onError={handleImageError}
+            className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
+            loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-70 group-hover:opacity-100 transition-opacity"></div>
-          <span className="absolute bottom-4 left-4 bg-green-600 text-white text-xs font-medium px-2 py-1 rounded">
-            {categoryName}
-          </span>
+          
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+          
+          {/* Category Badge */}
+          <div className="absolute bottom-4 left-4">
+            <span className="inline-flex items-center px-3 py-1.5 bg-white/95 backdrop-blur-sm text-green-800 text-sm font-semibold rounded-full shadow-lg">
+              {article.categoryName}
+            </span>
+          </div>
+
+          {/* Read time indicator */}
+          <div className="absolute top-4 left-4">
+            <span className="inline-flex items-center px-2 py-1 bg-black/30 backdrop-blur-sm text-white text-xs rounded-full">
+              <ClockIcon className="h-3 w-3 mr-1" />
+              {article.readTime}
+            </span>
+          </div>
         </div>
 
-        <div className="p-5">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors">
+        {/* Content Section */}
+        <div className={`${variant === 'compact' ? 'p-4' : 'p-5'}`}>
+          {/* Title */}
+          <h3 className={`font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors duration-200 leading-tight ${
+            variant === 'featured' ? 'text-xl' : 'text-lg'
+          }`}>
             {article.title}
           </h3>
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+          
+          {/* Description */}
+          <p className={`text-gray-600 mb-4 line-clamp-2 leading-relaxed ${
+            variant === 'compact' ? 'text-sm' : 'text-sm'
+          }`}>
             {article.description}
           </p>
 
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <div className="flex items-center">
-              <span>{article.author}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>{formatDate(article.date)}</span>
+          {/* Meta Information */}
+          <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+            <div className="flex items-center gap-3">
+              <span className="font-medium text-gray-700">{article.author}</span>
               <span>•</span>
-              <span>{article.readTime}</span>
+              <span title={formatDate(article.date)}>
+                {getRelativeTime(article.date)}
+              </span>
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-            <span className="text-xs text-gray-500">
-              {article.views.toLocaleString()} pembaca
-            </span>
-            <span className="text-green-600 text-sm font-medium flex items-center group-hover:underline">
+          {/* Tags (for featured variant) */}
+          {variant === 'featured' && article.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-4">
+              {article.tags.slice(0, 3).map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Action Row */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+
+            {/* Read More Link */}
+            <span className="text-green-600 text-sm font-medium flex items-center group-hover:text-green-700 transition-colors duration-200">
               Baca Selengkapnya
-              <ChevronRightIcon className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              <ChevronRightIcon className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
             </span>
           </div>
         </div>
       </Link>
+
+      {/* Hover Effect Border */}
+      <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-green-200 transition-colors duration-300 pointer-events-none" />
     </article>
   );
 };

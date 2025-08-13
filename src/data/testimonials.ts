@@ -19,8 +19,7 @@ export const testimonials: Testimonial[] = [
     tag: "Diabetes",
     story:
       "Bulan ke 7 saya sudah tidak menggunakan obat oral dan di bulan ke 10 saya sudah tidak menggunakan insulin sebelum tidur. Kini hanya insulin untuk makan. Saya diberikan kesembuhan oleh Allah melalui pengobatan CMI.",
-    image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
-    
+    image: "/images/testimonials/mustofa.jpg",    
   },
   {
     id: 2,
@@ -32,9 +31,6 @@ export const testimonials: Testimonial[] = [
     story:
       "Metode pengobatan kanker di CMI menjadikan tubuh saya mampu menyembuhkan dirinya sendiri. Baru dua bulan, kondisi payudara mulai mengecil dan sekarang hampir sama besar dengan yang kiri.",
     image: "/images/testimonials/triana.jpg",
-
-    // image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
-    
   },
   {
     id: 3,
@@ -45,10 +41,7 @@ export const testimonials: Testimonial[] = [
     tag: "Kanker",
     story:
       "Divonis kanker rahim menyebar ke serviks. Baru 10 hari berobat di CMI sudah merasa perbaikan. Tetap lanjutkan pengobatan selama 4 bulan. Kini 7 tahun kemudian saya benar-benar bersih dari kanker.",
-    // image: "/images/testimonials/elis.jpg",
-
-    image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
-    
+    image: "/images/testimonials/elis.jpg",
   },
   {
     id: 4,
@@ -59,9 +52,7 @@ export const testimonials: Testimonial[] = [
     tag: "Kanker Stadium 4B",
     story:
       "Kanker payudara stadium 4B, menyebar ke paru-paru dan tulang. Setelah berobat di CMI, hasil tes ulang menunjukkan tidak ada lagi sel kanker di tubuh saya.",
-    // image: "/images/testimonials/eulis.jpg",
-
-    image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
+    image: "/images/testimonials/eulis.jpg",
    
   },
   {
@@ -73,10 +64,7 @@ export const testimonials: Testimonial[] = [
     tag: "Kanker",
     story:
       "Konsultasi dengan dokter CMI membuat saya nyaman dan kembali punya semangat sembuh dari kanker.",
-    // image: "/images/testimonials/riyah.jpg",
-
-    image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
-    
+    image: "/images/testimonials/riyah.jpg",
   },
   {
     id: 6,
@@ -87,10 +75,7 @@ export const testimonials: Testimonial[] = [
     tag: "Diabetes",
     story:
       "Saya merasa lebih segar dan sehat. Perawat dan dokter di CMI sangat ramah. Saya ingin berbagi agar orang lain bisa mendapatkan manfaat seperti saya.",
-    // image: "/images/testimonials/erry.jpg",
-
-    image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
-    
+    image: "/images/testimonials/erry.jpg",    
   },
   {
     id: 7,
@@ -101,10 +86,8 @@ export const testimonials: Testimonial[] = [
     tag: "Tiroid",
     story:
       "Berobat 10 bulan di RS lain tanpa perbaikan. Di CMI, saya tidak mengalami efek samping seperti mual atau pusing dan akhirnya sembuh tanpa operasi.",
-    // image: "/images/testimonials/ida-rusida.jpg",
-    
-    image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
-  },
+    image: "/images/testimonials/ida-rusida.jpg",
+    },
   {
     id: 8,
     name: "Nendra",
@@ -114,8 +97,6 @@ export const testimonials: Testimonial[] = [
     tag: "Kanker",
     story:
       "Awalnya harus dioperasi. Setelah pengobatan di CMI, perdarahan berhenti, nafsu makan meningkat, dan akhirnya tidak jadi operasi.",
-    // image: "/images/testimonials/nendra.jpg",
-    
-    image: "https://res.cloudinary.com/dhxwxsmwj/image/upload/v1754388482/267_jantung_koroner_750x500_min_b5f1ac138d.webp"
-  },
+    image: "/images/testimonials/nendra.jpg",
+    },
 ];
