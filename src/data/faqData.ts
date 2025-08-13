@@ -58,7 +58,7 @@ export const videoData: VideoSection = {
     {
       id: "additional-1",
       title: "Testimoni Pasien Sembuh",
-      description: "Mendengar langsung cerita kesembuhan dari pasien-pasien kami",
+      description: "Sembuh kanker payudara tanpa operasi dan kemo | kesaksian sembuh kanker payudara Ibu Denie Melati",
       videoId: "AFH5HIlVPx0", // Ganti dengan video ID yang sebenarnya
     },
     {
