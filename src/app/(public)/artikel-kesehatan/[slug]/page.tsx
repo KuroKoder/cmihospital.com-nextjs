@@ -1,8 +1,13 @@
 // src/app/(public)/artikel-kesehatan/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import type { Article } from "@/types/article"; // Import Article type
 import MainLayout from "@/components/layout/main-layout";
-import { fetchArticleBySlug, fetchRelatedArticles } from "@/lib/api/strapi";
+import {
+  fetchArticleBySlug,
+  fetchRelatedArticles,
+  fetchArticles,
+} from "@/lib/api/strapi";
 import BackNavigation from "@/components/public/detailArticle/BackNavigation";
 import Breadcrumb from "@/components/public/detailArticle/BreadCrumb";
 import HeaderDetail from "@/components/public/detailArticle/HeaderDetail";
@@ -11,112 +16,268 @@ import RelatedArticle from "@/components/public/detailArticle/RelatedArticle";
 import Newsletter from "@/components/public/detailArticle/Newsletter";
 import SocialShareButtons from "@/components/public/detailArticle/SocialShare";
 
-// SEO Metadata dengan data dari Strapi
+// 🚀 ISR Configuration - Revalidate every 5 minutes
+export const revalidate = 300; // 5 menit
+
+// 🎯 Generate static params at build time untuk artikel populer
+export async function generateStaticParams() {
+  try {
+    // Fetch artikel terpopuler/terbaru untuk pre-generate
+    const { articles } = await fetchArticles({
+      pageSize: 50, // Pre-generate 50 artikel terpopuler
+      sortBy: "newest",
+    });
+
+    const paths = articles.map((article) => ({
+      slug: article.slug,
+    }));
+
+    console.log(
+      `🏗️ Pre-generating ${paths.length} article pages at build time`
+    );
+    return paths;
+  } catch (error) {
+    console.warn("⚠️ Error in generateStaticParams:", error);
+    // Return empty array jika ada error, tetap bisa fallback ke on-demand generation
+    return [];
+  }
+}
+
+// 📊 SEO Metadata dengan optimasi untuk search engines
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const artikel = await fetchArticleBySlug(params.slug);
-  
+  const resolvedParams = await params;
+  const artikel = (await fetchArticleBySlug(
+    resolvedParams.slug
+  )) as Article | null;
+
   if (!artikel) {
     return {
-      title: 'Artikel Tidak Ditemukan - Klinik Utama CMI',
-      description: 'Artikel yang Anda cari tidak dapat ditemukan.',
+      title: "Artikel Tidak Ditemukan - Klinik Utama CMI",
+      description: "Artikel kesehatan yang Anda cari tidak dapat ditemukan.",
+      robots: "noindex,nofollow", // Jangan index halaman 404
     };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cmihospital.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://cmihospital.com";
+  const canonicalUrl = `${baseUrl}/artikel-kesehatan/${artikel.slug}`;
 
+  // Enhanced SEO dengan lebih banyak meta tags
   return {
-    title: artikel.seo.metaTitle || `${artikel.title} - Klinik Utama CMI`,
-    description: artikel.seo.metaDescription || artikel.description,
-    robots: artikel.seo.metaRobots || 'index,follow',
+    title: artikel.seo?.metaTitle || `${artikel.title} | Klinik Utama CMI`,
+    description:
+      artikel.seo?.metaDescription || artikel.description?.substring(0, 160),
+    robots: artikel.seo?.metaRobots || "index,follow,max-image-preview:large",
+
+    // Open Graph untuk social sharing
     openGraph: {
       title: artikel.title,
-      description: artikel.description,
+      description: artikel.description?.substring(0, 160),
       type: "article",
-      url: `${baseUrl}/artikel-kesehatan/${artikel.slug}`,
+      url: canonicalUrl,
+      siteName: "Klinik Utama CMI",
+      locale: "id_ID",
       images: [
         {
-          url: artikel.image.startsWith('http') ? artikel.image : `${baseUrl}${artikel.image}`,
+          url: artikel.image?.startsWith("http")
+            ? artikel.image
+            : `${baseUrl}${artikel.image}`,
           width: 1200,
           height: 630,
           alt: artikel.title,
+          type: "image/jpeg",
         },
       ],
       publishedTime: artikel.publishedAt,
+      modifiedTime: artikel.updatedAt || artikel.publishedAt,
       authors: [artikel.author],
+      section: artikel.categoryName,
       tags: artikel.tags,
     },
+
+    // Twitter Card
     twitter: {
       card: "summary_large_image",
+      site: "@cmihospital", // Ganti dengan handle Twitter Anda
+      creator: "@cmihospital",
       title: artikel.title,
-      description: artikel.description,
-      images: [artikel.image],
+      description: artikel.description?.substring(0, 160),
+      images: [
+        artikel.image?.startsWith("http")
+          ? artikel.image
+          : `${baseUrl}${artikel.image}`,
+      ],
     },
-    keywords: artikel.tags.join(', ') + ', kesehatan, artikel kesehatan, tips kesehatan, klinik cmi',
-    authors: [{ name: artikel.author }],
+
+    // Additional SEO enhancements
+    keywords: [
+      ...artikel.tags,
+      "kesehatan",
+      "artikel kesehatan",
+      "tips kesehatan",
+      "klinik cmi",
+      "pelayanan kesehatan",
+      artikel.categoryName,
+    ].join(", "),
+
+    authors: [
+      {
+        name: artikel.author,
+        url: `${baseUrl}/author/${artikel.authorSlug || "team"}`,
+      },
+    ],
+    category: artikel.categoryName,
+
+    // Canonical URL
     alternates: {
-      canonical: `${baseUrl}/artikel-kesehatan/${artikel.slug}`,
+      canonical: canonicalUrl,
+    },
+
+    // Additional meta tags
+    other: {
+      "article:published_time": artikel.publishedAt,
+      "article:modified_time": artikel.updatedAt || artikel.publishedAt,
+      "article:author": artikel.author,
+      "article:section": artikel.categoryName,
+      "article:tag": artikel.tags.join(","),
+      "reading-time": artikel.readTime,
     },
   };
 }
 
-// Halaman artikel detail dengan integrasi Strapi
+// 📄 Main Article Page Component
 export default async function ArtikelDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  // Fetch artikel berdasarkan slug
-  const artikel = await fetchArticleBySlug(params.slug);
-  
+  const resolvedParams = await params;
+
+  // Fetch artikel dengan error handling
+  const artikel = (await fetchArticleBySlug(
+    resolvedParams.slug
+  )) as Article | null;
+
   if (!artikel) {
     return notFound();
   }
 
-  // Fetch artikel terkait
-  const relatedArticles = await fetchRelatedArticles(artikel, 6);
+  // Fetch related articles dengan error handling
+  let relatedArticles: Article[] = [];
+  try {
+    relatedArticles = await fetchRelatedArticles(artikel, 6);
+  } catch (error) {
+    console.warn("⚠️ Error fetching related articles:", error);
+    // Continue without related articles
+  }
 
-  // Struktur data JSON-LD untuk SEO
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://cmihospital.com";
+
+  // 🔍 Enhanced JSON-LD untuk rich snippets
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": artikel.title,
-    "description": artikel.description,
-    "image": artikel.image,
-    "author": {
+    headline: artikel.title,
+    description: artikel.description,
+    image: {
+      "@type": "ImageObject",
+      url: artikel.image?.startsWith("http")
+        ? artikel.image
+        : `${baseUrl}${artikel.image}`,
+      width: 1200,
+      height: 630,
+      caption: artikel.title,
+    },
+    author: {
       "@type": "Person",
-      "name": artikel.author,
-      "email": artikel.authorEmail,
+      name: artikel.author,
+      email: artikel.authorEmail,
+      url: `${baseUrl}/author/${artikel.authorSlug || "team"}`,
     },
-    "publisher": {
+    publisher: {
       "@type": "Organization",
-      "name": "Klinik Utama CMI",
-      "logo": {
+      name: "Klinik Utama CMI",
+      url: baseUrl,
+      logo: {
         "@type": "ImageObject",
-        "url": `${process.env.NEXT_PUBLIC_BASE_URL}/images/logo.png`
-      }
+        url: `${baseUrl}/images/logo.png`,
+        width: 200,
+        height: 60,
+      },
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Jl. Raya CMI", // Sesuaikan alamat
+        addressLocality: "Jakarta",
+        addressCountry: "ID",
+      },
     },
-    "datePublished": artikel.publishedAt,
-    "dateModified": artikel.publishedAt,
-    "mainEntityOfPage": {
+    datePublished: artikel.publishedAt,
+    dateModified: artikel.updatedAt || artikel.publishedAt,
+    mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${process.env.NEXT_PUBLIC_BASE_URL}/artikel-kesehatan/${artikel.slug}`
+      "@id": `${baseUrl}/artikel-kesehatan/${artikel.slug}`,
     },
-    "articleSection": artikel.categoryName,
-    "keywords": artikel.tags,
-    "wordCount": artikel.content.split(' ').length,
-    "timeRequired": artikel.readTime,
+    url: `${baseUrl}/artikel-kesehatan/${artikel.slug}`,
+    articleSection: artikel.categoryName,
+    keywords: artikel.tags,
+    wordCount: artikel.content?.split(" ").length || 0,
+    timeRequired: artikel.readTime,
+    inLanguage: "id-ID",
+    isAccessibleForFree: true,
+    genre: "health",
+    about: {
+      "@type": "Thing",
+      name: artikel.categoryName,
+    },
+  };
+
+  // Tambahan JSON-LD untuk breadcrumb
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Artikel Kesehatan",
+        item: `${baseUrl}/artikel-kesehatan`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: artikel.categoryName,
+        item: `${baseUrl}/artikel-kesehatan/kategori/${
+          artikel.categorySlug || "umum"
+        }`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: artikel.title,
+        item: `${baseUrl}/artikel-kesehatan/${artikel.slug}`,
+      },
+    ],
   };
 
   return (
     <>
-      {/* JSON-LD Script */}
+      {/* 🔍 Enhanced JSON-LD Scripts */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <MainLayout>
@@ -125,55 +286,62 @@ export default async function ArtikelDetailPage({
           <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 pt-28">
             <BackNavigation />
           </div>
+
           <div className="container mx-auto px-4 py-8 lg:py-12">
             <div className="max-w-6xl mx-auto">
-              {/* Breadcrumb */}
+              {/* Breadcrumb untuk SEO */}
               <Breadcrumb artikel={artikel} />
 
-              {/* Article Header */}
-              <HeaderDetail 
-                artikel={{
-                  title: artikel.title,
-                  author: artikel.author,
-                  date: artikel.publishedAt,
-                  readTime: artikel.readTime,
-                  image: artikel.image,
-                  description: artikel.description,
-                  category: artikel.categoryName,
-                  isFeatured: artikel.isFeatured
-                }} 
-              />
-
-              {/* Social Share Buttons - Floating */}
-              <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-30 hidden lg:block">
-                <div className="flex flex-col space-y-2">
-                  <SocialShareButtons 
-                    title={artikel.title}
-                    description={artikel.description}
-                    slug={artikel.slug}
-                  />
-                </div>
-              </div>
-
-              {/* Main Article Content */}
-              <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-12">
-                <ArticleContent 
-                  content={artikel.content}
-                  title={artikel.title}
+              {/* Article Header dengan microdata */}
+              <article itemScope itemType="https://schema.org/Article">
+                <HeaderDetail
+                  artikel={{
+                    title: artikel.title,
+                    author: artikel.author,
+                    date: artikel.publishedAt,
+                    readTime: artikel.readTime,
+                    image: artikel.image,
+                    description: artikel.description,
+                    category: artikel.categoryName,
+                    isFeatured: artikel.isFeatured,
+                  }}
                 />
 
-                {/* Mobile Social Share */}
-                <div className="lg:hidden px-6 pb-6">
-                  <div className="flex items-center justify-between pt-6 border-t border-gray-200">
-                    <span className="text-sm text-gray-600">Bagikan artikel ini:</span>
-                    <SocialShareButtons 
+                {/* Social Share Buttons - Floating */}
+                <div className="fixed left-4 top-1/2 transform -translate-y-1/2 z-30 hidden lg:block">
+                  <div className="flex flex-col space-y-2">
+                    <SocialShareButtons
                       title={artikel.title}
                       description={artikel.description}
                       slug={artikel.slug}
                     />
                   </div>
                 </div>
-              </div>
+
+                {/* Main Article Content */}
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-12">
+                  <div itemProp="articleBody">
+                    <ArticleContent
+                      content={artikel.content}
+                      title={artikel.title}
+                    />
+                  </div>
+
+                  {/* Mobile Social Share */}
+                  <div className="lg:hidden px-6 pb-6">
+                    <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+                      <span className="text-sm text-gray-600">
+                        Bagikan artikel ini:
+                      </span>
+                      <SocialShareButtons
+                        title={artikel.title}
+                        description={artikel.description}
+                        slug={artikel.slug}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </article>
 
               {/* Related Articles */}
               {relatedArticles.length > 0 && (
@@ -189,21 +357,3 @@ export default async function ArtikelDetailPage({
     </>
   );
 }
-
-// Generate static params untuk build time
-export async function generateStaticParams() {
-  // Dalam production, Anda bisa fetch semua artikel untuk static generation
-  // Untuk sekarang, kita return empty array untuk dynamic generation
-  return [];
-}
-// export async function generateStaticParams() {
-//   const { articles } = await fetchArticles({ pageSize: 100 });
-//   return articles.map(article => ({ slug: article.slug }));
-// }
-
-// export default async function ArticlePage({ params }) {
-//   const article = await fetchArticleBySlug(params.slug);
-//   return <Article article={article} />;
-// }
-
-// export const revalidate = 300; // 5 menit untuk ISR

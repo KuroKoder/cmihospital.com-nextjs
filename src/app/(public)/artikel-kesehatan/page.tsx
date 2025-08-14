@@ -3,19 +3,15 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   BookmarkIcon,
   ArrowLongRightIcon,
-  EyeIcon,
   FireIcon,
   StarIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
-import {
-  EyeIcon as EyeSolidIcon,
-  FireIcon as FireSolidIcon,
-} from "@heroicons/react/24/solid";
+import { FireIcon as FireSolidIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import Head from "next/head";
 
@@ -36,7 +32,7 @@ import {
   SortBy,
   PaginationMeta,
 } from "@/types/article";
-import { formatDate, getRelativeTime } from "@/utils/articleUtils";
+import { getRelativeTime } from "@/utils/articleUtils";
 
 const ARTICLES_PER_PAGE = 6;
 
