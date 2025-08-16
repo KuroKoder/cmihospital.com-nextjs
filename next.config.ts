@@ -36,6 +36,15 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.pixabay.com",
       },
+      // Added for YouTube thumbnails (for your video section)
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+      },
     ],
   },
 
@@ -48,8 +57,7 @@ const nextConfig: NextConfig = {
   // React strict mode
   reactStrictMode: true,
 
-  // SWC minification
-  swcMinify: true,
+  // ❌ REMOVED: swcMinify: true, // This is now default in Next.js 13+
 
   // Headers untuk caching dan security
   async headers() {
@@ -61,6 +69,15 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "origin-when-cross-origin" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
+          // Added security headers
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
         ],
       },
       {
@@ -90,7 +107,54 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Added specific caching for static assets
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
+  },
+
+  // Optional: Add redirects for SEO if needed
+  async redirects() {
+    return [
+      // Example redirects - add as needed
+      // {
+      //   source: '/old-path',
+      //   destination: '/new-path',
+      //   permanent: true,
+      // },
+    ];
+  },
+
+  // Optional: Add rewrites for clean URLs
+  async rewrites() {
+    return [
+      // Example rewrites - add as needed
+      // {
+      //   source: '/blog/:slug',
+      //   destination: '/artikel-kesehatan/:slug',
+      // },
+    ];
+  },
+
+  // Environment variables validation
+  env: {
+    NEXT_PUBLIC_BASE_URL:
+      process.env.NEXT_PUBLIC_BASE_URL || "https://cmihospital.com",
+  },
+
+  // TypeScript and ESLint settings
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
   },
 };
 

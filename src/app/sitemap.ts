@@ -1,3 +1,4 @@
+// src/app/sitemap.ts
 import { fetchArticles, fetchCategories } from "@/lib/api/strapi";
 import type { MetadataRoute } from "next";
 

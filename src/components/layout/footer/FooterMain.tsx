@@ -71,6 +71,7 @@ const FooterMain = () => (
               src="/images/logo/logo.svg"
               alt="Logo CMI Hospital"
               fill
+              sizes="64px" // <- tambahkan ini
               className="object-contain"
               priority
             />

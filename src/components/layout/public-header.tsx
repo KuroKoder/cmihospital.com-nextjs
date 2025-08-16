@@ -407,7 +407,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
           {/* Action buttons */}
           <div className="pt-4 space-y-3">
             <Link
-              href="/jadwal"
+              href="/"
               onClick={onClose}
               className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-green-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
             >
@@ -429,7 +429,7 @@ const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
               Hubungi Kami
             </Link>
             <Link
-              href="/daftar-online"
+              href="/kontak"
               onClick={onClose}
               className="flex w-full items-center justify-center rounded-lg bg-green-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-700 focus:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
             >
@@ -569,22 +569,11 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Tablet navigation */}
-          <div className="hidden md:flex lg:hidden items-center space-x-2 overflow-x-auto">
-            {navigationItems.slice(0, 4)}
-            <Link
-              href="/daftar-online"
-              className="inline-flex items-center justify-center rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all hover:shadow-md whitespace-nowrap ml-4"
-            >
-              Daftar
-              <span className="ml-1" aria-hidden="true">
-                →
-              </span>
-            </Link>
-          </div>
+          {/* Tablet navigation - DISEMBUNYIKAN SEPENUHNYA */}
+          {/* Bagian tablet navigation dihapus untuk menyembunyikan navigasi pada tablet */}
 
-          {/* Mobile menu button */}
-          <div className="flex md:hidden">
+          {/* Mobile menu button - Sekarang aktif untuk tablet dan mobile */}
+          <div className="flex lg:hidden">
             <button
               type="button"
               onClick={openMobileMenu}
