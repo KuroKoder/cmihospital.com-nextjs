@@ -1,7 +1,7 @@
 // data/heroData.ts
 import { StaticImageData } from "next/image";
 import ClinicExterior from "../../public/images/hero/Gedungcmi.jpg";
-import CMI from "../../public/images/hero/cmi.webp";
+import CMI from "../../public/images/hero/HERO-3.webp";
 
 export interface HeroBanner {
   id: number;
@@ -120,7 +120,7 @@ export const heroData: HeroBanner[] = [
     title: "Kami Hadir untuk Kesehatan Anda",
     subtitle: "Klinik Utama CMI",
     description:
-      "Sejak 2008, CMI hadir sebagai pusat pengobatan penyakit kronis dengan metode terintegrasi antara medis modern dan pengobatan klasik timur. Kami menangani kanker, jantung, diabetes, dan gagal ginjal dengan hasil terukur, aman, dan minim efek samping. Ribuan pasien telah membuktikannya, kini giliran Anda untuk sehat kembali.",
+      "PENGOBATAN KANKER TANPA KEMOTERAPI & OPERASI, PENGOBATAN JANTUNG TANPA RING & BYPASS, PENGOBATAN GINJAL DAPAT MENGURANGI FREKUENSI CUCI DARAH, PENGOBATAN DIABETES TANPA INSULIN & OBAT SEUMUR HIDUP",
     image: CMI,
     imageAlt:
       "Klinik Utama CMI - Spesialis penyakit kronis dengan metode pengobatan integratif",
