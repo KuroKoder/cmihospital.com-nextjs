@@ -3,7 +3,10 @@ import { ArrowRight, User, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import ArticleCard from "@/components/public/articles/ArticleCard";
 import { useState, useEffect } from "react";
-import { fetchFeaturedArticles, fetchCategories } from "@/lib/api/strapi";
+import {
+  fetchFeaturedArticles,
+  fetchCategories,
+} from "@/app/lib/api/client-strapi";
 import { Article, Category } from "@/types/article";
 import Image from "next/image";
 

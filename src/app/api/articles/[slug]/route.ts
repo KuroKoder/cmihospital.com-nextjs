@@ -1,19 +1,23 @@
+// app/api/articles/[slug]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { strapiApi } from "@/lib/api/strapi";
+import { strapiApi } from "@/app/lib/api/strapi";
 
 interface RouteParams {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ slug: string }> }
+) {
   try {
-    const { slug } = params;
+    const { slug } = await context.params;
 
     if (!slug) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
+
+    console.log("📖 API Route - Fetching article by slug:", slug);
 
     const article = await strapiApi.fetchArticleBySlug(slug);
 

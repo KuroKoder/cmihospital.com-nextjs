@@ -1,8 +1,11 @@
+// app/api/test-connection/route.ts
 import { NextResponse } from "next/server";
-import { strapiApi } from "@/lib/api/strapi";
+import { strapiApi } from "@/app/lib/api/strapi";
 
 export async function GET() {
   try {
+    console.log("🔧 API Route - Testing connection");
+
     const result = await strapiApi.testApiConnection();
 
     return NextResponse.json(result, {
@@ -11,6 +14,7 @@ export async function GET() {
       },
     });
   } catch (error) {
+    console.error("❌ API Route Error (test connection):", error);
     return NextResponse.json(
       {
         success: false,

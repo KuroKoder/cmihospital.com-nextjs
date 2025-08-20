@@ -1,30 +1,30 @@
+// app/api/articles/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { strapiApi } from "@/lib/api/strapi";
+import { strapiApi } from "@/app/lib/api/strapi";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
+    // Parse query parameters
     const filters = {
-      page: searchParams.get("page")
-        ? parseInt(searchParams.get("page")!)
-        : undefined,
+      page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : 1,
       pageSize: searchParams.get("pageSize")
-        ? parseInt(searchParams.get("pageSize")!)
-        : undefined,
+        ? Math.min(parseInt(searchParams.get("pageSize")!), 50)
+        : 10,
       search: searchParams.get("search") || undefined,
-      category: searchParams.get("category") || undefined,
+      category:
+        searchParams.get("category") && searchParams.get("category") !== "all"
+          ? searchParams.get("category")!
+          : undefined,
       sortBy:
         (searchParams.get("sortBy") as "newest" | "oldest" | "popular") ||
-        undefined,
+        "newest",
     };
 
-    // Remove undefined values
-    const cleanFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value !== undefined)
-    );
+    console.log("📊 API Route - Fetching articles with filters:", filters);
 
-    const result = await strapiApi.fetchArticles(cleanFilters);
+    const result = await strapiApi.fetchArticles(filters);
 
     return NextResponse.json(result, {
       headers: {
@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
       {
         articles: [],
         pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 },
-        error: "Failed to fetch articles",
+        error:
+          error instanceof Error ? error.message : "Failed to fetch articles",
       },
       { status: 500 }
     );

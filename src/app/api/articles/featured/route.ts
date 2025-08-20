@@ -1,14 +1,17 @@
+// app/api/articles/featured/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { strapiApi } from "@/lib/api/strapi";
+import { strapiApi } from "@/app/lib/api/strapi";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = searchParams.get("limit")
-      ? parseInt(searchParams.get("limit")!)
+      ? Math.min(parseInt(searchParams.get("limit")!), 20)
       : 6;
 
-    const articles = await strapiApi.fetchFeaturedArticles(Math.min(limit, 20)); // Max 20
+    console.log("⭐ API Route - Fetching featured articles, limit:", limit);
+
+    const articles = await strapiApi.fetchFeaturedArticles(limit);
 
     return NextResponse.json(articles, {
       headers: {

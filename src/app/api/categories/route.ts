@@ -1,8 +1,11 @@
+// app/api/categories/route.ts
 import { NextResponse } from "next/server";
-import { strapiApi } from "@/lib/api/strapi";
+import { strapiApi } from "@/app/lib/api/strapi";
 
 export async function GET() {
   try {
+    console.log("📂 API Route - Fetching categories");
+
     const categories = await strapiApi.fetchCategories();
 
     return NextResponse.json(categories, {
