@@ -1,369 +1,250 @@
 "use client";
+import { useState } from "react";
+import {
+  Play,
+  Video,
+  Calendar,
+  ExternalLink,
+  Heart,
+  Instagram,
+} from "lucide-react";
 
-import { useState, useEffect } from "react";
-import { Play, ExternalLink, Heart, MessageCircle, Share } from "lucide-react";
+// ---------- Types ----------
+interface YouTubeVideo {
+  id: string;
+  title: string;
+  embedUrl: string;
+  publishedAt: string;
+  category: string;
+  keywords?: string[];
+}
 
-const VideoSection = () => {
-  const [selectedPlatform, setSelectedPlatform] = useState("youtube");
-  const [loadedEmbeds, setLoadedEmbeds] = useState({});
+// ---------- Data ----------
+const FEATURED_VIDEO: YouTubeVideo = {
+  id: "8QgiBelEExY",
+  title: "Testimoni Pasien Klinik Utama CMI",
+  embedUrl: "https://www.youtube.com/embed/8QgiBelEExY?si=I4222tBEqTMYe843",
+  publishedAt: "2024-08-10",
+  category: "Terapi Jantung",
+  keywords: [
+    "terapi jantung",
+    "tanpa operasi",
+    "Ibn Sina Formula",
+    "CMI Hospital",
+    "pengobatan alami",
+  ],
+};
 
-  // Video data organized by platform
-  const videoData = {
-    youtube: [
-      {
-        id: "8QgiBelEExY",
-        title: "CMI Hospital - Video 1",
-        embedUrl:
-          "https://www.youtube.com/embed/8QgiBelEExY?si=I4222tBEqTMYe843",
-        thumbnail: `https://img.youtube.com/vi/8QgiBelEExY/maxresdefault.jpg`,
-      },
-      {
-        id: "C--B4DJnnG4",
-        title: "CMI Hospital - Video 2",
-        embedUrl:
-          "https://www.youtube.com/embed/C--B4DJnnG4?si=LAKKm7N5Z9x0VEX7",
-        thumbnail: `https://img.youtube.com/vi/C--B4DJnnG4/maxresdefault.jpg`,
-      },
-      {
-        id: "mgRVbOLoibE",
-        title: "CMI Hospital - Video 3",
-        embedUrl:
-          "https://www.youtube.com/embed/mgRVbOLoibE?si=MkdUhaxxbfY-VVHu",
-        thumbnail: `https://img.youtube.com/vi/mgRVbOLoibE/maxresdefault.jpg`,
-      },
-    ],
-    instagram: [
-      {
-        id: "DKmU5XASoZR",
-        url: "https://www.instagram.com/p/DKmU5XASoZR/",
-        account: "@detakjantungcmi",
-      },
-      {
-        id: "DNe3AsRTy_p",
-        url: "https://www.instagram.com/p/DNe3AsRTy_p/",
-        account: "@cmihospitals",
-      },
-      {
-        id: "DNe3oUDzy_z",
-        url: "https://www.instagram.com/p/DNe3oUDzy_z/",
-        account: "@cmihospitals",
-      },
-      {
-        id: "DNe4LAKTtZv",
-        url: "https://www.instagram.com/p/DNe4LAKTtZv/",
-        account: "@cmihospitals",
-      },
-    ],
-    tiktok: [
-      {
-        id: "7525036994892795141",
-        account: "@cmihospitals",
-        description:
-          "Kanker, gagal ginjal, diabetes dan gagal jantung sembuh tanpa operasi #EnergiKuatTiapLangkah",
-        url: "https://www.tiktok.com/@cmihospitals/video/7525036994892795141",
-      },
-      {
-        id: "7504162498694679813",
-        account: "@cmihospitals",
-        description: "CMI Hospital Content",
-        url: "https://www.tiktok.com/@cmihospitals/video/7504162498694679813",
-      },
-      {
-        id: "7533549583578696968",
-        account: "@detakjantungcmi",
-        description: "Jantung Kita Content",
-        url: "https://www.tiktok.com/@detakjantungcmi/video/7533549583578696968",
-      },
-    ],
-  };
+const SOCIAL_LINKS = {
+  youtube: "https://www.youtube.com/@Klinik-Utama-CMI",
+  instagram: "https://www.instagram.com/cmihospital.official/",
+  tiktok: "https://www.tiktok.com/@cmihospitals",
+};
 
-  // Load Instagram embed script
-  useEffect(() => {
-    if (selectedPlatform === "instagram" && !window.instgrm) {
-      const script = document.createElement("script");
-      script.src = "//www.instagram.com/embed.js";
-      script.async = true;
-      document.body.appendChild(script);
-
-      script.onload = () => {
-        if (window.instgrm) {
-          window.instgrm.Embeds.process();
-        }
-      };
-    }
-  }, [selectedPlatform]);
-
-  // Load TikTok embed script
-  useEffect(() => {
-    if (
-      selectedPlatform === "tiktok" &&
-      !document.querySelector('script[src="https://www.tiktok.com/embed.js"]')
-    ) {
-      const script = document.createElement("script");
-      script.src = "https://www.tiktok.com/embed.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, [selectedPlatform]);
-
-  const handleVideoLoad = (videoId) => {
-    setLoadedEmbeds((prev) => ({ ...prev, [videoId]: true }));
-  };
-
-  const PlatformTabs = () => (
-    <div className="flex flex-wrap justify-center gap-2 mb-8">
-      {[
-        {
-          key: "youtube",
-          label: "YouTube",
-          icon: "📺",
-          color: "bg-red-500 hover:bg-red-600",
-        },
-        {
-          key: "instagram",
-          label: "Instagram",
-          icon: "📸",
-          color:
-            "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600",
-        },
-        {
-          key: "tiktok",
-          label: "TikTok",
-          icon: "🎵",
-          color: "bg-black hover:bg-gray-800",
-        },
-      ].map((platform) => (
-        <button
-          key={platform.key}
-          onClick={() => setSelectedPlatform(platform.key)}
-          className={`px-6 py-3 rounded-full text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
-            selectedPlatform === platform.key
-              ? `${platform.color} scale-105 shadow-xl`
-              : "bg-gray-400 hover:bg-gray-500"
-          }`}
-        >
-          <span className="mr-2">{platform.icon}</span>
-          {platform.label}
-        </button>
-      ))}
+// ---------- Social Media Button ----------
+const SocialButton = ({
+  url,
+  icon: Icon,
+  label,
+  color,
+}: {
+  platform: string;
+  url: string;
+  icon: React.ComponentType<{ size: number }>;
+  label: string;
+  color: string;
+}) => (
+  <a
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-white font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg ${color} group relative overflow-hidden`}
+    aria-label={`Kunjungi ${label} CMI Hospital untuk konten kesehatan terbaru`}
+  >
+    <div className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+    <Icon size={18} />
+    <span className="text-sm font-semibold relative z-10">{label}</span>
+    <div className="opacity-70 group-hover:opacity-100 relative z-10">
+      <ExternalLink size={12} />
     </div>
-  );
+  </a>
+);
 
-  const YouTubeVideo = ({ video, index }) => (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl">
-      <div className="relative aspect-video">
-        {!loadedEmbeds[video.id] && (
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center cursor-pointer group"
-            onClick={() => handleVideoLoad(video.id)}
-          >
-            <div className="text-center">
-              <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-600 transition-colors">
-                <Play className="w-8 h-8 text-white ml-1" />
-              </div>
-              <p className="text-red-700 font-medium">Click to load video</p>
-            </div>
-          </div>
-        )}
-        {loadedEmbeds[video.id] && (
-          <iframe
-            width="100%"
-            height="100%"
-            src={video.embedUrl}
-            title={video.title}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-            className="absolute inset-0"
-          />
-        )}
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-800 mb-2">{video.title}</h3>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-red-600 font-medium">YouTube</span>
-          <ExternalLink className="w-4 h-4 text-gray-400" />
-        </div>
-      </div>
-    </div>
-  );
-
-  const InstagramPost = ({ post, index }) => (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl">
-      <div className="aspect-square bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
-        <div className="text-center p-6">
-          <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4 mx-auto">
-            <span className="text-2xl">📸</span>
-          </div>
-          <p className="text-gray-600 mb-4">Instagram Post</p>
-          <a
-            href={post.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full hover:from-purple-600 hover:to-pink-600 transition-all"
-          >
-            View on Instagram
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-800 mb-2">{post.account}</h3>
-        <div className="flex items-center justify-between">
-          <span className="text-sm bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent font-medium">
-            Instagram
-          </span>
-          <div className="flex gap-3 text-gray-400">
-            <Heart className="w-4 h-4" />
-            <MessageCircle className="w-4 h-4" />
-            <Share className="w-4 h-4" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const TikTokVideo = ({ video, index }) => (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 hover:shadow-2xl">
-      <div className="aspect-[9/16] max-h-96 bg-gradient-to-br from-gray-900 to-black flex items-center justify-center relative">
-        <div className="text-center p-6">
-          <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4 mx-auto">
-            <span className="text-2xl">🎵</span>
-          </div>
-          <p className="text-white mb-4 text-sm">{video.account}</p>
-          <a
-            href={video.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-all"
-          >
-            Watch on TikTok
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
-      </div>
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-800 mb-2 text-sm line-clamp-2">
-          {video.description}
-        </h3>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-black font-medium">TikTok</span>
-          <span className="text-xs text-gray-500">{video.account}</span>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderContent = () => {
-    const data = videoData[selectedPlatform];
-
-    switch (selectedPlatform) {
-      case "youtube":
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.map((video, index) => (
-              <YouTubeVideo key={video.id} video={video} index={index} />
-            ))}
-          </div>
-        );
-
-      case "instagram":
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {data.map((post, index) => (
-              <InstagramPost key={post.id} post={post} index={index} />
-            ))}
-          </div>
-        );
-
-      case "tiktok":
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {data.map((video, index) => (
-              <TikTokVideo key={video.id} video={video} index={index} />
-            ))}
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
+// ---------- Video Player ----------
+const VideoPlayer = ({ video }: { video: YouTubeVideo }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Our{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Social Media
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Follow our journey across different platforms and stay updated with
-            our latest content
-          </p>
-        </div>
-
-        {/* Platform Tabs */}
-        <PlatformTabs />
-
-        {/* Content */}
-        <div className="animate-fadeIn">{renderContent()}</div>
-
-        {/* Stats */}
-        <div className="mt-16 bg-white rounded-2xl shadow-xl p-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-red-500">
-                {videoData.youtube.length}+
-              </div>
-              <div className="text-gray-600">YouTube Videos</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                {videoData.instagram.length}+
-              </div>
-              <div className="text-gray-600">Instagram Posts</div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-3xl font-bold text-black">
-                {videoData.tiktok.length}+
-              </div>
-              <div className="text-gray-600">TikTok Videos</div>
-            </div>
-          </div>
-        </div>
+    <div className="bg-white rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500">
+      <div className="aspect-video relative">
+        <iframe
+          src={`${video.embedUrl}&autoplay=0`}
+          className="w-full h-full"
+          frameBorder="0"
+          allowFullScreen
+          title={video.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          loading="lazy"
+        />
       </div>
 
-      <style jsx>{`
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-in-out;
-        }
+      {/* Video Info */}
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-3 text-sm text-gray-500">
+          <Calendar size={14} />
+          <time dateTime={video.publishedAt}>
+            {new Date(video.publishedAt).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </time>
+        </div>
 
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-      `}</style>
-    </section>
+        <h2 className="text-xl font-bold text-gray-800 mb-3 leading-tight line-clamp-2">
+          {video.title}
+        </h2>
+        <a
+          href={`https://www.youtube.com/watch?v=${video.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 hover:shadow-lg hover:scale-105 group"
+          aria-label="Tonton video lengkap di YouTube"
+        >
+          Tonton di YouTube
+          <div className="group-hover:translate-x-0.5 transition-transform duration-200">
+            <ExternalLink size={14} />
+          </div>
+        </a>
+      </div>
+    </div>
   );
 };
 
-export default VideoSection;
+// ---------- Main Component ----------
+const SocialMediaVideosSection = () => {
+  return (
+    <>
+      {/* SEO Schema Markup */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            name: FEATURED_VIDEO.title,
+            uploadDate: FEATURED_VIDEO.publishedAt,
+            embedUrl: FEATURED_VIDEO.embedUrl,
+            publisher: {
+              "@type": "Organization",
+              name: "CMI Hospital",
+              url: "https://cmihospital.com",
+            },
+            keywords: FEATURED_VIDEO.keywords?.join(", "),
+          }),
+        }}
+      />
+
+      <section
+        className="relative bg-white py-20 px-4 overflow-hidden"
+        aria-labelledby="video-section-title"
+      >
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-green-500 rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500 rounded-full filter blur-3xl"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Main Content Grid */}
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
+            {/* Left Content */}
+            <div className="space-y-8">
+              {/* Header */}
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold">
+                  <Heart size={16} />
+                  Video Edukasi Kesehatan
+                </div>
+
+                <h1
+                  id="video-section-title"
+                  className="text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-800 leading-tight"
+                >
+                  Testimoni{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-green-700 to-green-800">
+                    Kesembuhan
+                  </span>{" "}
+                  Nyata
+                </h1>
+
+                <p className="text-lg lg:text-xl text-gray-600 leading-relaxed max-w-2xl">
+                  Saksikan kesaksian pasien yang telah sembuh dengan metode
+                  pengobatan{" "}
+                  <strong className="text-green-700">Ibn Sina Formula</strong>{" "}
+                  tanpa operasi. Spesialis Kanker, Diabetes, Gagal Ginjal &
+                  Jantung.
+                </p>
+              </div>
+
+              {/* CTA Text */}
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-2xl border border-green-100">
+                <h3 className="font-bold text-gray-800 mb-2">
+                  🎯 Mengapa Pilih CMI Hospital?
+                </h3>
+                <ul className="text-gray-600 space-y-1 text-sm">
+                  <li>• Metode pengobatan alami tanpa efek samping</li>
+                  <li>• Pengalaman lebih dari 15 tahun</li>
+                  <li>• Ribuan pasien telah merasakan kesembuhan</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Right Content - Video */}
+            <div className="order-first lg:order-last">
+              <VideoPlayer video={FEATURED_VIDEO} />
+            </div>
+          </div>
+
+          {/* Social Media Section */}
+          <div className="bg-white rounded-2xl p-6">
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                Ikuti Media Sosial Kami
+              </h2>
+              <p className="text-gray-600">
+                Tips kesehatan dan testimoni kesembuhan
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-lg mx-auto">
+              <SocialButton
+                platform="youtube"
+                url={SOCIAL_LINKS.youtube}
+                icon={Play}
+                label="YouTube"
+                color="bg-red-600 hover:bg-red-700"
+              />
+              <SocialButton
+                platform="instagram"
+                url={SOCIAL_LINKS.instagram}
+                icon={Instagram}
+                label="Instagram"
+                color="bg-purple-600 hover:bg-purple-700"
+              />
+              <SocialButton
+                platform="tiktok"
+                url={SOCIAL_LINKS.tiktok}
+                icon={Video}
+                label="TikTok"
+                color="bg-gray-800 hover:bg-gray-900"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default SocialMediaVideosSection;

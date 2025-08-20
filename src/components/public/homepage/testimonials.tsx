@@ -13,7 +13,9 @@ export default function MedicalTestimonials() {
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+    setCurrentIndex(
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length
+    );
   };
 
   const goToSlide = (index: number) => {
@@ -38,7 +40,8 @@ export default function MedicalTestimonials() {
           alt={current.name}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover 
+                     object-[85%_20%] md:object-[right_10%]"
         />
         {/* Desktop: Left overlay, Mobile: Bottom overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent md:bg-gradient-to-r md:from-black/85 md:via-black/50 md:to-transparent lg:bg-gradient-to-r lg:from-black/90 lg:via-black/60 lg:to-black/20" />
@@ -74,11 +77,11 @@ export default function MedicalTestimonials() {
                 Klinik Utama CMI
               </span>
             </div>
-            
+
             <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight">
               Cerita Pasien Kami
             </h1>
-            
+
             <div className="w-16 md:w-24 h-1 bg-emerald-400 rounded-full" />
           </div>
 
@@ -97,9 +100,7 @@ export default function MedicalTestimonials() {
             <div className="flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 md:space-x-4">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-emerald-400 rounded-full" />
-                <span className="text-white font-medium">
-                  {current.name}
-                </span>
+                <span className="text-white font-medium">{current.name}</span>
               </div>
               <span className="text-gray-300 hidden md:inline">•</span>
               <span className="text-gray-300 text-sm md:text-base">
@@ -138,10 +139,10 @@ export default function MedicalTestimonials() {
 
       {/* Progress Bar */}
       <div className="absolute bottom-0 left-0 w-full h-1 bg-black/30 z-20">
-        <div 
+        <div
           className="h-full bg-emerald-400 transition-all duration-300 ease-linear"
-          style={{ 
-            width: `${((currentIndex + 1) / testimonials.length) * 100}%` 
+          style={{
+            width: `${((currentIndex + 1) / testimonials.length) * 100}%`,
           }}
         />
       </div>

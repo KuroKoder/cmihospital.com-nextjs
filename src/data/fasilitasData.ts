@@ -8,7 +8,7 @@ export interface FacilityDetail {
 export interface Facility {
   id: string;
   title: string;
-  iconName: 'Heart' | 'Users' | 'Microscope' | 'BedDouble' | 'Coffee';
+  iconName: "Heart" | "Users" | "Microscope" | "BedDouble" | "Coffee";
   image: string;
   description: string;
   details: FacilityDetail[];
@@ -19,7 +19,7 @@ export const facilitiesData: Facility[] = [
     id: "chronic",
     title: "Spesialisasi Penyakit Kronis",
     iconName: "Heart",
-    image: "/api/placeholder/600/400",
+    image: "/images/hero/cmi.webp",
     description:
       "Pusat unggulan untuk pengobatan penyakit kronis dengan pendekatan komplementer berlandaskan metode Ibnu Sina.",
     details: [
@@ -27,29 +27,29 @@ export const facilitiesData: Facility[] = [
         id: 1,
         title: "Pengobatan Kanker",
         description:
-          "Layanan terapi komplementer untuk pasien kanker dengan pendekatan holistik yang memadukan pengobatan tradisional dan modern.",
-        image: "/images/fasilitas/chronic/kanker.png",
+          "Klinik Utama CMI menyediakan pengobatan kanker inovatif yang bertujuan menghindari kemoterapi, operasi, dan radioterapi, serta dapat diterapkan pada semua jenis kanker dari stadium awal hingga stadium lanjut. Terapi ini menggunakan obat oral berbahan ekstrak alami non-sintetis dengan dosis yang disesuaikan kondisi pasien, berfungsi memperbaiki sistem tubuh termasuk sistem imun, sekaligus menyerang sel kanker secara spesifik tanpa merusak sel normal. Pengobatan dilakukan secara berkala sesuai tahapan farmakologi obat selama 6–12 bulan, dilengkapi dengan konsultasi nutrisi kanker untuk mendukung pemulihan dan meningkatkan kualitas hidup pasien.",
+        image: "/images/services/kanker.svg",
       },
       {
         id: 2,
         title: "Penanganan Gagal Ginjal",
         description:
-          "Program komprehensif untuk pasien gagal ginjal dengan metode terapi yang membantu meningkatkan kualitas hidup.",
-        image: "/images/fasilitas/chronic/gagal-ginjal.png",
+          "Klinik Utama CMI menawarkan terapi penyakit ginjal dari stadium awal hingga lanjut dengan obat oral yang disesuaikan kondisi pasien, membantu memperbaiki fungsi ginjal, mengurangi frekuensi cuci darah, menurunkan kreatinin dan ureum, serta meningkatkan kualitas hidup pasien gagal ginjal",
+        image: "/images/services/ginjal.svg",
       },
       {
         id: 3,
         title: "Manajemen Diabetes",
         description:
-          "Program pengelolaan diabetes jangka panjang dengan pendekatan nutrisi, aktivitas fisik dan terapi komplementer.",
-        image: "/images/fasilitas/chronic/diabetes.png",
+          "Klinik Utama CMI menyediakan terapi diabetes tipe 1 dan tipe 2 yang difokuskan pada edukasi pasien sekaligus pengobatan non-invasif tanpa suntik insulin maupun ketergantungan obat seumur hidup. Terapi ini bekerja dengan memecah glukosa berlebih dalam darah untuk diubah menjadi energi, mengembalikan fungsi pankreas serta sel penerima gula di seluruh tubuh, dan menurunkan kadar gula darah secara bertahap. Dengan konsumsi rutin selama 6–12 bulan, pengobatan ini minim efek samping serta efektif mencegah terjadinya komplikasi akibat diabetes, sehingga mampu meningkatkan kualitas hidup pasien.",
+        image: "/images/services/diabetes.svg",
       },
       {
         id: 4,
         title: "Perawatan Jantung",
         description:
-          "Perawatan jantung terpadu dengan fokus pada pencegahan, pengobatan, dan rehabilitasi menggunakan metode Ibnu Sina.",
-        image: "/images/fasilitas/chronic/jantung.png",
+          "Klinik Utama CMI menawarkan terapi jantung non-invasif yang bertujuan menghancurkan plak penyumbat pembuluh darah serta memperbaiki organ jantung dan pembuluh darah yang telah rusak. Terapi ini dilakukan dengan pemberian obat oral sesuai kondisi masing-masing pasien, minim efek samping, dan mampu menghentikan ketergantungan terhadap obat-obatan jantung. Dengan durasi konsumsi sekitar 4–6 bulan, pengobatan ini efektif mencegah risiko komplikasi penyakit jantung serta mengurangi kebutuhan tindakan medis invasif seperti pemasangan ring atau operasi bypass ulang.",
+        image: "/images/services/jantung.svg",
       },
     ],
   },
@@ -57,7 +57,7 @@ export const facilitiesData: Facility[] = [
     id: "general",
     title: "Poliklinik Umum",
     iconName: "Users",
-    image: "/api/placeholder/600/400",
+    image: "/images/hero/cmi.webp",
     description:
       "Layanan kesehatan umum untuk menangani berbagai keluhan dan penyakit sehari-hari.",
     details: [
@@ -95,7 +95,7 @@ export const facilitiesData: Facility[] = [
     id: "laboratory",
     title: "Laboratorium",
     iconName: "Microscope",
-    image: "/api/placeholder/600/400",
+    image: "/images/hero/cmi.webp",
     description:
       "Fasilitas laboratorium modern untuk mendukung diagnosis dan pemantauan kesehatan pasien.",
     details: [
@@ -133,7 +133,7 @@ export const facilitiesData: Facility[] = [
     id: "inpatient",
     title: "Rawat Inap",
     iconName: "BedDouble",
-    image: "/api/placeholder/600/400",
+    image: "/images/hero/cmi.webp",
     description:
       "Fasilitas rawat inap nyaman dengan perawatan optimal untuk pasien yang membutuhkan pengawasan intensif.",
     details: [
@@ -171,7 +171,7 @@ export const facilitiesData: Facility[] = [
     id: "amenities",
     title: "Fasilitas Pendukung",
     iconName: "Coffee",
-    image: "/api/placeholder/600/400",
+    image: "/images/hero/cmi.webp",
     description:
       "Berbagai fasilitas pendukung untuk kenyamanan pasien dan keluarga selama berada di klinik.",
     details: [

@@ -19,7 +19,7 @@ export const testimonials: Testimonial[] = [
     tag: "Diabetes",
     story:
       "Bulan ke 7 saya sudah tidak menggunakan obat oral dan di bulan ke 10 saya sudah tidak menggunakan insulin sebelum tidur. Kini hanya insulin untuk makan. Saya diberikan kesembuhan oleh Allah melalui pengobatan CMI.",
-    image: "/images/testimonials/mustofa.jpg",    
+    image: "/images/testimonials/mustofa.webp",
   },
   {
     id: 2,
@@ -41,7 +41,7 @@ export const testimonials: Testimonial[] = [
     tag: "Kanker",
     story:
       "Divonis kanker rahim menyebar ke serviks. Baru 10 hari berobat di CMI sudah merasa perbaikan. Tetap lanjutkan pengobatan selama 4 bulan. Kini 7 tahun kemudian saya benar-benar bersih dari kanker.",
-    image: "/images/testimonials/elis.jpg",
+    image: "/images/testimonials/elis.webp",
   },
   {
     id: 4,
@@ -52,8 +52,7 @@ export const testimonials: Testimonial[] = [
     tag: "Kanker Stadium 4B",
     story:
       "Kanker payudara stadium 4B, menyebar ke paru-paru dan tulang. Setelah berobat di CMI, hasil tes ulang menunjukkan tidak ada lagi sel kanker di tubuh saya.",
-    image: "/images/testimonials/eulis.jpg",
-   
+    image: "/images/testimonials/eulis.webp",
   },
   {
     id: 5,
@@ -75,7 +74,7 @@ export const testimonials: Testimonial[] = [
     tag: "Diabetes",
     story:
       "Saya merasa lebih segar dan sehat. Perawat dan dokter di CMI sangat ramah. Saya ingin berbagi agar orang lain bisa mendapatkan manfaat seperti saya.",
-    image: "/images/testimonials/erry.jpg",    
+    image: "/images/testimonials/erry.jpg",
   },
   {
     id: 7,
@@ -87,7 +86,7 @@ export const testimonials: Testimonial[] = [
     story:
       "Berobat 10 bulan di RS lain tanpa perbaikan. Di CMI, saya tidak mengalami efek samping seperti mual atau pusing dan akhirnya sembuh tanpa operasi.",
     image: "/images/testimonials/ida-rusida.jpg",
-    },
+  },
   {
     id: 8,
     name: "Nendra",
@@ -98,5 +97,5 @@ export const testimonials: Testimonial[] = [
     story:
       "Awalnya harus dioperasi. Setelah pengobatan di CMI, perdarahan berhenti, nafsu makan meningkat, dan akhirnya tidak jadi operasi.",
     image: "/images/testimonials/nendra.jpg",
-    },
+  },
 ];

@@ -148,6 +148,7 @@ export default function FacilitiesPage() {
                 <div className="relative w-full h-64 overflow-hidden rounded-t-xl">
                   <Image
                     src={facility.image}
+                    // src="/images/hero/cmi.webp"
                     alt={facility.title}
                     fill
                     sizes="(max-width: 768px) 100vw, 1200px"
