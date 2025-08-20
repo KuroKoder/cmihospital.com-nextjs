@@ -5,6 +5,7 @@ import ModalsKonsultasi, { FormDataJadwal } from "../../ui/modal-konsultasi";
 import Image from "next/image";
 import Button from "../../ui/button";
 import { services, Service } from "../../../data/services";
+import Link from "next/link";
 
 const LayananUnggulan = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -160,7 +161,6 @@ const LayananUnggulan = () => {
                   >
                     {/* Service Card Split Layout */}
                     <div className="relative h-[600px] mx-4 rounded-2xl overflow-hidden shadow-2xl bg-white flex flex-col md:flex-row">
-                      <div> className= "absolute inset-0 bg-black/40 z-0"</div>
                       {/* Left Content */}
                       <div className="flex-1 p-8 flex flex-col justify-center">
                         <h3 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 leading-tight">
@@ -188,14 +188,11 @@ const LayananUnggulan = () => {
                         </div>
 
                         {/* CTA Button */}
-                        <Button
-                          onClick={() => openModal(service)}
-                          variant="primary"
-                          size="lg"
-                          className="w-fit"
-                        >
-                          Konsultasi Sekarang
-                        </Button>
+                        <Link href="/kontak">
+                          <Button variant="primary" size="lg" className="w-fit">
+                            Konsultasi Sekarang
+                          </Button>
+                        </Link>
                       </div>
 
                       {/* Right Image */}

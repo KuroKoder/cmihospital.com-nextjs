@@ -14,7 +14,7 @@ const socialLinks = [
     icon: FaFacebookF,
   },
   {
-    href: "https://instagram.com/cmihospital",
+    href: "https://instagram.com/cmihospital.official/",
     label: "Instagram",
     icon: FaInstagram,
   },
