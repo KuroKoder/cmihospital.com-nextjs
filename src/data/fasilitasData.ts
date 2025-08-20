@@ -106,27 +106,6 @@ export const facilitiesData: Facility[] = [
           "Analisis darah menyeluruh untuk mendeteksi berbagai kondisi kesehatan.",
         image: "/images/fasilitas/laboratory/pemeriksaan-darah-lengkap.png",
       },
-      {
-        id: 10,
-        title: "Tes Fungsi Organ",
-        description:
-          "Pemeriksaan fungsi organ vital seperti hati, ginjal, dan jantung.",
-        image: "/images/fasilitas/laboratory/tes-fungsi-organ.png",
-      },
-      {
-        id: 11,
-        title: "Tes Hormon",
-        description:
-          "Pemeriksaan kadar hormon untuk diagnosis dan pemantauan berbagai kondisi endokrin.",
-        image: "/images/fasilitas/laboratory/tes-hormon.png",
-      },
-      {
-        id: 12,
-        title: "Tes Genetik",
-        description:
-          "Analisis genetik untuk mendeteksi predisposisi terhadap penyakit tertentu.",
-        image: "/images/fasilitas/laboratory/tes-genetik.png",
-      },
     ],
   },
   {
@@ -142,7 +121,7 @@ export const facilitiesData: Facility[] = [
         title: "Kamar Rawat Inap Nyaman",
         description:
           "Kamar rawat inap dengan berbagai pilihan kelas yang dilengkapi fasilitas pendukung kenyamanan pasien.",
-        image: "/images/fasilitas/inpatient/kamar-rawat-inap-nyaman.png",
+        image: "/images/fasilitas/inpatient/kamar-rawat-inap-nyaman.jpg",
       },
       {
         id: 14,
@@ -150,20 +129,6 @@ export const facilitiesData: Facility[] = [
         description:
           "Tim medis profesional yang siap memberikan perawatan 24 jam penuh.",
         image: "/images/fasilitas/inpatient/perawatan-24-jam.png",
-      },
-      {
-        id: 15,
-        title: "Ruang Keluarga",
-        description:
-          "Area khusus untuk keluarga pasien yang dilengkapi dengan fasilitas pendukung.",
-        image: "/images/fasilitas/inpatient/ruang-keluarga.png",
-      },
-      {
-        id: 16,
-        title: "Program Rehabilitasi",
-        description:
-          "Program rehabilitasi terpadu untuk pemulihan pasien pascaperawatan.",
-        image: "/images/fasilitas/inpatient/program-rehabilitasi.png",
       },
     ],
   },

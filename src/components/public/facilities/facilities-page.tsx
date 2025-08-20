@@ -22,7 +22,7 @@ const iconMap = {
   BedDouble: BedDouble,
   Coffee: Coffee,
 };
-
+import Link from "next/link";
 export default function FacilitiesPage() {
   const [activeTab, setActiveTab] = useState("chronic");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -410,18 +410,12 @@ export default function FacilitiesPage() {
               solusi terbaik untuk kondisi kesehatan Anda.
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-white text-green-800 px-8 py-4 rounded-lg font-semibold hover:bg-green-100 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+              <Link
+                href="/kontak"
+                className="bg-white text-green-800 px-8 py-4 rounded-lg font-semibold hover:bg-green-100 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 text-center"
               >
                 Jadwalkan Konsultasi
-              </button>
-              {isModalOpen && (
-                <ModalsKonsultasi
-                  isOpen={isModalOpen}
-                  onClose={() => setIsModalOpen(false)}
-                />
-              )}
+              </Link>
             </div>
           </div>
         </div>

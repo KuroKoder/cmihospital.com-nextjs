@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import GedungCMI from "../../../../public/images/hero/cmi.webp";
+import GRSetra from "../../../../public/images/about/grsetra.png";
 
 const HistorySection: React.FC = () => {
   const milestones = [
@@ -29,7 +30,6 @@ const HistorySection: React.FC = () => {
         </h2>
         <div className="w-24 h-1 bg-green-600 mx-auto"></div>
       </div>
-
       {/* Awal Mula Section */}
       <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         <div className="space-y-6">
@@ -62,18 +62,16 @@ const HistorySection: React.FC = () => {
 
         <div className="order-first lg:order-last">
           <div className="bg-gray-100 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="aspect-video bg-gray-200 flex items-center justify-center">
-              <div className="text-center p-6">
-                <div className="text-gray-500 text-lg font-medium">
-                  Foto Gedung Lama (2008)
-                </div>
-                <div className="text-gray-400 text-sm mt-2">
-                  [Placeholder untuk foto historical]
-                </div>
-              </div>
-            </div>
+            <Image
+              src={GRSetra}
+              alt="Klinik Utama CMI Sekarang"
+              className="w-full aspect-video object-cover"
+              priority={true}
+              quality={85}
+              placeholder="blur"
+            />
             <div className="p-4 bg-green-900 text-white">
-              <p className="text-sm font-medium">GR SETRA CMI Tahun 2008</p>
+              <p className="text-sm font-medium">GR SETRA Tahun 2008</p>
             </div>
           </div>
         </div>
@@ -120,7 +118,6 @@ const HistorySection: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Timeline */}
       <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 sm:p-8 lg:p-10 rounded-2xl border border-green-200">
         <h3 className="text-xl sm:text-2xl font-semibold text-green-800 mb-6 sm:mb-8 text-center">

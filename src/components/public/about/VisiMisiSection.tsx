@@ -28,10 +28,9 @@ const VisiMisiSection: React.FC = () => {
           <div className="h-1 w-20 sm:w-24 bg-white mb-6 sm:mb-8"></div>
 
           <blockquote className="text-lg sm:text-xl lg:text-2xl mb-6 font-medium leading-relaxed">
-  &ldquo;Menjadi Rumah Sakit Komplementer Terbaik di Dunia Didukung oleh
-  Ilmu dan Teknologi yang Mutakhir.&rdquo;
-</blockquote>
-
+            &ldquo;Menjadi Rumah Sakit Komplementer Terbaik di Dunia Didukung
+            oleh Ilmu dan Teknologi yang Mutakhir.&rdquo;
+          </blockquote>
 
           <p className="text-green-100 leading-relaxed">
             Kami berkomitmen untuk terus berada di garis depan inovasi layanan
