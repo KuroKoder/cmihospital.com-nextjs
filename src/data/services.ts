@@ -1,8 +1,8 @@
-import Diabetes from "../../public/images/services/diabetes.svg";
+import Diabetes from "../../public/images/services/diabetes1.svg";
 import Laboratorium from "../../public/images/services/laboratorium.webp";
-import Kanker from "../../public/images/services/kanker.svg";
-import Jantung from "../../public/images/services/jantung.svg";
-import Ginjal from "../../public/images/services/ginjal.svg";
+import Kanker from "../../public/images/services/kanker1.svg";
+import Jantung from "../../public/images/services/jantung1.svg";
+import Ginjal from "../../public/images/services/ginjal1.svg";
 
 // Define the Service type
 export type Service = {

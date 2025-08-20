@@ -19,7 +19,7 @@ const LayananUnggulan = () => {
     if (!service.imagePosition) {
       return { objectPosition: "center center" };
     }
-    
+
     return {
       "--object-position-mobile": service.imagePosition.mobile,
       "--object-position-sm": service.imagePosition.tablet,
@@ -95,20 +95,20 @@ const LayananUnggulan = () => {
         .responsive-image-position {
           object-position: var(--object-position-mobile, center center);
         }
-        
+
         @media (min-width: 640px) {
           .responsive-image-position {
             object-position: var(--object-position-sm, center center);
           }
         }
-        
+
         @media (min-width: 1024px) {
           .responsive-image-position {
             object-position: var(--object-position-lg, center center);
           }
         }
       `}</style>
-      
+
       <section className="relative py-10 min-h-screen overflow-hidden bg-gray-50">
         <div className="relative z-10 container mx-auto px-4">
           {/* Header Section */}
@@ -158,44 +158,28 @@ const LayananUnggulan = () => {
                     className="relative group flex-shrink-0"
                     style={{ width: `${100 / services.length}%` }}
                   >
-                    {/* Service Card with Image Background */}
-                    <div className="relative h-[600px] mx-4 rounded-2xl overflow-hidden shadow-2xl">
-                      {/* Background Image */}
-                      <div className="absolute inset-0">
-                        <Image
-                          src={service.image}
-                          alt={service.nama}
-                          fill
-                          className="object-cover responsive-image-position"
-                          style={getImagePositionStyle(service)}
-                          priority={index === 0}
-                        />
-                        {/* Improved Dark Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10"></div>
-                      </div>
-
-                      {/* Content Overlay */}
-                      <div className="relative h-full flex flex-col justify-end p-8 text-white">
-                        {/* Service Title */}
-                        <h3 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+                    {/* Service Card Split Layout */}
+                    <div className="relative h-[600px] mx-4 rounded-2xl overflow-hidden shadow-2xl bg-white flex flex-col md:flex-row">
+                      <div> className= "absolute inset-0 bg-black/40 z-0"</div>
+                      {/* Left Content */}
+                      <div className="flex-1 p-8 flex flex-col justify-center">
+                        <h3 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 leading-tight">
                           {service.nama}
                         </h3>
 
-                        {/* Service Description */}
-                        <p className="text-lg text-white/90 mb-6 leading-relaxed max-w-md">
+                        <p className="text-lg text-gray-600 mb-6 leading-relaxed max-w-md">
                           {service.deskripsi}
                         </p>
 
-                        {/* Features */}
                         <div className="mb-8">
-                          <h4 className="font-semibold text-white/80 mb-4 text-sm uppercase tracking-wider">
+                          <h4 className="font-semibold text-gray-700 mb-4 text-sm uppercase tracking-wider">
                             Pelayanan
                           </h4>
                           <div className="flex flex-wrap gap-3">
                             {service.features.map((feature, i) => (
                               <span
                                 key={i}
-                                className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium border border-white/20 hover:bg-white/20 transition-colors"
+                                className="px-4 py-2 bg-emerald-50 rounded-full text-sm font-medium border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors"
                               >
                                 {feature}
                               </span>
@@ -212,6 +196,18 @@ const LayananUnggulan = () => {
                         >
                           Konsultasi Sekarang
                         </Button>
+                      </div>
+
+                      {/* Right Image */}
+                      <div className="relative flex-1 h-[300px] md:h-full">
+                        <Image
+                          src={service.image}
+                          alt={service.nama}
+                          fill
+                          className="object-cover responsive-image-position"
+                          style={getImagePositionStyle(service)}
+                          priority={index === 0}
+                        />
                       </div>
                     </div>
                   </motion.div>
