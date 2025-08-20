@@ -174,7 +174,7 @@ export default function FacilitiesPage() {
                   </p>
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    {facility.details.map((detail, index) => (
+                    {facility.details.map((detail) => (
                       <div
                         key={detail.id}
                         className="bg-gradient-to-br from-gray-50 to-green-50/30 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-green-100/50"

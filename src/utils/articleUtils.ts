@@ -6,6 +6,8 @@ import {
   Category,
   Author,
   StrapiAuthor,
+  StrapiMedia,
+  StrapiContentBlock,
 } from "@/types/article";
 
 /**
@@ -39,7 +41,7 @@ export function extractTextFromHTML(
  * Get best image URL from Strapi media formats
  */
 export function getOptimalImageUrl(
-  media: any,
+  media: StrapiMedia | null | undefined,
   size: "thumbnail" | "small" | "medium" | "large" | "original" = "small"
 ): string {
   if (!media) return "/images/placeholder-article.jpg";
@@ -112,12 +114,19 @@ export function determineIfFeatured(article: StrapiArticle): boolean {
 /**
  * Combine all content blocks into single HTML string
  */
-export function combineContentBlocks(contentBlocks: any[]): string {
+export function combineContentBlocks(
+  contentBlocks: StrapiContentBlock[]
+): string {
   if (!contentBlocks || !Array.isArray(contentBlocks)) return "";
 
   return contentBlocks
     .filter(
-      (block) => block && block.__component === "shared.rich-text" && block.body
+      (
+        block
+      ): block is StrapiContentBlock & {
+        __component: "shared.rich-text";
+        body: string;
+      } => block && block.__component === "shared.rich-text" && "body" in block
     )
     .map((block) => block.body)
     .join("\n\n");
@@ -325,7 +334,7 @@ export function getRelativeTime(dateString: string): string {
 /**
  * Get image URL with fallback handling
  */
-export function getImageUrl(article: any): string {
+export function getImageUrl(article: Pick<Article, "image">): string {
   if (!article?.image) return "/images/placeholder-article.jpg";
 
   // If it's already a full URL, return as is
@@ -491,10 +500,25 @@ export function getArticleUrl(slug: string): string {
   return `${baseUrl}/artikel-kesehatan/${slug}`;
 }
 
+interface StructuredDataArticle {
+  title: string;
+  description: string;
+  image: string;
+  author: string;
+  authorEmail: string;
+  categoryName: string;
+  publishedAt: string;
+  updatedAt: string;
+  slug: string;
+  tags?: string[];
+  content: string;
+  readTime?: string;
+}
+
 /**
  * Generate structured data for article
  */
-export function generateArticleStructuredData(article: any) {
+export function generateArticleStructuredData(article: StructuredDataArticle) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://cmihospital.com";
 
   return {
@@ -504,7 +528,7 @@ export function generateArticleStructuredData(article: any) {
     description: article.description,
     image: {
       "@type": "ImageObject",
-      url: getImageUrl(article),
+      url: getImageUrl({ image: article.image }),
       width: 1200,
       height: 630,
     },

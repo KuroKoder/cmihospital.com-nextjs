@@ -94,7 +94,7 @@ export default function MedicalTestimonials() {
             </div>
 
             <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight">
-              "{current.title}"
+              {`"${current.title}"`}
             </h2>
 
             <div className="flex flex-col md:flex-row md:items-center space-y-1 md:space-y-0 md:space-x-4">

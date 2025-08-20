@@ -71,12 +71,12 @@ const FooterMain = () => (
               src="/images/logo/logo.svg"
               alt="Logo CMI Hospital"
               fill
-              sizes="64px" // <- tambahkan ini
+              sizes="64px"
               className="object-contain"
               priority
             />
           </div>
-          <h2 className="text-2xl font-bold text-white">CMI Hospital</h2>
+          <h2 className="text-2xl font-bold text-white">Klinik Utama CMI</h2>
         </div>
         <p className="text-white-100 leading-relaxed mb-6 mt-4">
           CMI Hospital memberikan pelayanan kesehatan dengan menggabungkan dua

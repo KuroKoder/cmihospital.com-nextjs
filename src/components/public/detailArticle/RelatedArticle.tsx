@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, Eye, Calendar, ArrowRight } from "lucide-react";
+import { Clock, Calendar, ArrowRight } from "lucide-react";
 import { formatDateShort } from "@/utils/articleUtils";
 import type { Article } from "@/types/article";
 

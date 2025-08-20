@@ -5,6 +5,7 @@ import ArticleCard from "@/components/public/articles/ArticleCard";
 import { useState, useEffect } from "react";
 import { fetchFeaturedArticles, fetchCategories } from "@/lib/api/strapi";
 import { Article, Category } from "@/types/article";
+import Image from "next/image";
 
 // Komponen utama
 export default function HealthArticlesSection() {
@@ -20,14 +21,14 @@ export default function HealthArticlesSection() {
         setLoading(true);
         const [fetchedArticles, fetchedCategories] = await Promise.all([
           fetchFeaturedArticles(6), // Get 6 articles for display
-          fetchCategories()
+          fetchCategories(),
         ]);
-        
+
         setArticles(fetchedArticles);
         setCategories(fetchedCategories);
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Gagal memuat artikel. Silakan coba lagi nanti.');
+        console.error("Error fetching data:", err);
+        setError("Gagal memuat artikel. Silakan coba lagi nanti.");
       } finally {
         setLoading(false);
       }
@@ -57,7 +58,7 @@ export default function HealthArticlesSection() {
         <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
           <div className="text-center">
             <div className="text-red-600 mb-4">{error}</div>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
             >
@@ -71,9 +72,10 @@ export default function HealthArticlesSection() {
 
   // Get latest articles (first 3)
   const latestArticles = articles.slice(0, 3);
-  
+
   // Get featured article (first one or fallback)
-  const latestArticle = articles.find(article => article.isFeatured) || articles[0];
+  const latestArticle =
+    articles.find((article) => article.isFeatured) || articles[0];
 
   // Handle case when no articles available
   if (!latestArticle) {
@@ -91,12 +93,12 @@ export default function HealthArticlesSection() {
   // Format tanggal
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     };
-    return date.toLocaleDateString('id-ID', options);
+    return date.toLocaleDateString("id-ID", options);
   };
 
   return (
@@ -142,17 +144,22 @@ export default function HealthArticlesSection() {
             <div className="w-full md:w-1/2">
               <Link href={`/artikel-kesehatan/${latestArticle.slug}`}>
                 <div className="relative overflow-hidden rounded-xl shadow-lg cursor-pointer group">
-                  <img
-                    src={latestArticle.image}
-                    alt={latestArticle.title}
-                    className="w-full h-64 md:h-96 object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  <div className="relative w-full h-64 md:h-96">
+                    <Image
+                      src={latestArticle.image}
+                      alt={latestArticle.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority={true}
+                      quality={85}
+                    />
+                  </div>
                   <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-900/70 to-transparent p-6">
                     <div className="flex items-center justify-between">
                       <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-md">
                         {latestArticle.categoryName}
                       </span>
-                      
                     </div>
                   </div>
                 </div>
@@ -208,7 +215,8 @@ export default function HealthArticlesSection() {
               Ingin Membaca Lebih Banyak Artikel Kesehatan?
             </h3>
             <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Jelajahi koleksi lengkap artikel kesehatan kami dengan berbagai topik menarik dan informasi terkini dari para ahli.
+              Jelajahi koleksi lengkap artikel kesehatan kami dengan berbagai
+              topik menarik dan informasi terkini dari para ahli.
             </p>
             <Link href="/artikel-kesehatan">
               <button className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-8 py-4 rounded-lg transition-all duration-300 text-lg">

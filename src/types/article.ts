@@ -145,7 +145,7 @@ export interface StrapiSeo {
   // Add optional fields for enhanced SEO
   metaImage?: StrapiMedia;
   keywords?: string;
-  structuredData?: Record<string, any>;
+  structuredData?: Record<string, unknown>;
 }
 
 export interface StrapiLocalization {

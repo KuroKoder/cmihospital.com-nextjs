@@ -1,11 +1,7 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Experimental features untuk performance
-  experimental: {
-    optimizePackageImports: ["lucide-react", "@heroicons/react"],
-  },
-
   // Image optimization
   images: {
     formats: ["image/webp", "image/avif"],
@@ -36,7 +32,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.pixabay.com",
       },
-      // Added for YouTube thumbnails (for your video section)
+      // Added for YouTube thumbnails
       {
         protocol: "https",
         hostname: "img.youtube.com",
@@ -51,15 +47,13 @@ const nextConfig: NextConfig = {
   // Compression
   compress: true,
 
-  // Hilangkan header "X-Powered-By"
+  // Remove "X-Powered-By" header
   poweredByHeader: false,
 
   // React strict mode
   reactStrictMode: true,
 
-  // ❌ REMOVED: swcMinify: true, // This is now default in Next.js 13+
-
-  // Headers untuk caching dan security
+  // Headers for caching and security
   async headers() {
     return [
       {
@@ -69,7 +63,6 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "origin-when-cross-origin" },
           { key: "X-DNS-Prefetch-Control", value: "on" },
-          // Added security headers
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=()",
@@ -107,7 +100,6 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Added specific caching for static assets
       {
         source: "/_next/static/(.*)",
         headers: [
@@ -120,30 +112,7 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Optional: Add redirects for SEO if needed
-  async redirects() {
-    return [
-      // Example redirects - add as needed
-      // {
-      //   source: '/old-path',
-      //   destination: '/new-path',
-      //   permanent: true,
-      // },
-    ];
-  },
-
-  // Optional: Add rewrites for clean URLs
-  async rewrites() {
-    return [
-      // Example rewrites - add as needed
-      // {
-      //   source: '/blog/:slug',
-      //   destination: '/artikel-kesehatan/:slug',
-      // },
-    ];
-  },
-
-  // Environment variables validation
+  // Environment variables
   env: {
     NEXT_PUBLIC_BASE_URL:
       process.env.NEXT_PUBLIC_BASE_URL || "https://cmihospital.com",

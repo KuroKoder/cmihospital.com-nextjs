@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Star, Quote, Filter, Users, Heart, Award } from "lucide-react";
-import { testimonials, type Testimonial } from "@/data/testimonials";
+import { testimonials } from "@/data/testimonials";
 import CTA from "@/components/ui/cta";
 
 const TestimonialsPage: React.FC = () => {

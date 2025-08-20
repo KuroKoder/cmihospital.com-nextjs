@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import {
   Play,
   Video,
@@ -72,8 +71,6 @@ const SocialButton = ({
 
 // ---------- Video Player ----------
 const VideoPlayer = ({ video }: { video: YouTubeVideo }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500">
       <div className="aspect-video relative">

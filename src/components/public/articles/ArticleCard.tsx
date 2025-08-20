@@ -4,61 +4,65 @@ import Link from "next/link";
 import { ChevronRightIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { Article } from "@/types/article";
 import { formatDate, getRelativeTime } from "@/utils/articleUtils";
-
+import Image from "next/image";
 interface ArticleCardProps {
   article: Article;
   showFeaturedBadge?: boolean;
-  variant?: 'default' | 'compact' | 'featured';
+  variant?: "default" | "compact" | "featured";
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({
   article,
-  variant = 'default',
+  variant = "default",
 }) => {
   // Handle image error
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
-    target.src = '/images/placeholder-article.jpg';
+    target.src = "/images/placeholder-article.jpg";
   };
 
   const getVariantClasses = () => {
     switch (variant) {
-      case 'compact':
-        return 'bg-white rounded-lg shadow-sm hover:shadow-md';
-      case 'featured':
-        return 'bg-white rounded-xl shadow-lg hover:shadow-xl border border-gray-100';
+      case "compact":
+        return "bg-white rounded-lg shadow-sm hover:shadow-md";
+      case "featured":
+        return "bg-white rounded-xl shadow-lg hover:shadow-xl border border-gray-100";
       default:
-        return 'bg-white rounded-xl shadow-md hover:shadow-lg';
+        return "bg-white rounded-xl shadow-md hover:shadow-lg";
     }
   };
 
   const getImageHeight = () => {
     switch (variant) {
-      case 'compact':
-        return 'h-32';
-      case 'featured':
-        return 'h-56';
+      case "compact":
+        return "h-32";
+      case "featured":
+        return "h-56";
       default:
-        return 'h-48';
+        return "h-48";
     }
   };
 
   return (
-    <article className={`${getVariantClasses()} overflow-hidden transition-all duration-300 group relative hover:-translate-y-1`}>
+    <article
+      className={`${getVariantClasses()} overflow-hidden transition-all duration-300 group relative hover:-translate-y-1`}
+    >
       <Link href={`/artikel-kesehatan/${article.slug}`} className="block">
         {/* Image Section */}
         <div className={`relative ${getImageHeight()} overflow-hidden`}>
-          <img
-            src={article.image}
-            alt={article.title}
+          <Image
+            src={article.image || "/images/fallback.jpg"}
+            alt={article.title || "Artikel kesehatan"}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform group-hover:scale-110 duration-500"
             onError={handleImageError}
-            className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
             loading="lazy"
           />
-          
+
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-          
+
           {/* Category Badge */}
           <div className="absolute bottom-4 left-4">
             <span className="inline-flex items-center px-3 py-1.5 bg-white/95 backdrop-blur-sm text-green-800 text-sm font-semibold rounded-full shadow-lg">
@@ -76,25 +80,31 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         </div>
 
         {/* Content Section */}
-        <div className={`${variant === 'compact' ? 'p-4' : 'p-5'}`}>
+        <div className={`${variant === "compact" ? "p-4" : "p-5"}`}>
           {/* Title */}
-          <h3 className={`font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors duration-200 leading-tight ${
-            variant === 'featured' ? 'text-xl' : 'text-lg'
-          }`}>
+          <h3
+            className={`font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-600 transition-colors duration-200 leading-tight ${
+              variant === "featured" ? "text-xl" : "text-lg"
+            }`}
+          >
             {article.title}
           </h3>
-          
+
           {/* Description */}
-          <p className={`text-gray-600 mb-4 line-clamp-2 leading-relaxed ${
-            variant === 'compact' ? 'text-sm' : 'text-sm'
-          }`}>
+          <p
+            className={`text-gray-600 mb-4 line-clamp-2 leading-relaxed ${
+              variant === "compact" ? "text-sm" : "text-sm"
+            }`}
+          >
             {article.description}
           </p>
 
           {/* Meta Information */}
           <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
             <div className="flex items-center gap-3">
-              <span className="font-medium text-gray-700">{article.author}</span>
+              <span className="font-medium text-gray-700">
+                {article.author}
+              </span>
               <span>•</span>
               <span title={formatDate(article.date)}>
                 {getRelativeTime(article.date)}
@@ -103,7 +113,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           </div>
 
           {/* Tags (for featured variant) */}
-          {variant === 'featured' && article.tags.length > 0 && (
+          {variant === "featured" && article.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-4">
               {article.tags.slice(0, 3).map((tag, index) => (
                 <span
@@ -118,7 +128,6 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
 
           {/* Action Row */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-
             {/* Read More Link */}
             <span className="text-green-600 text-sm font-medium flex items-center group-hover:text-green-700 transition-colors duration-200">
               Baca Selengkapnya

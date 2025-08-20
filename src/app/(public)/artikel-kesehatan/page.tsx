@@ -1,6 +1,3 @@
-// pages/artikel-kesehatan/index.tsx (if using Pages Router)
-// OR app/artikel-kesehatan/page.tsx (if using App Router)
-
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
@@ -14,6 +11,7 @@ import {
 import { FireIcon as FireSolidIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import Head from "next/head";
+import Image from "next/image";
 
 // Import components
 import SearchSection from "@/components/public/articles/SearchSection";
@@ -114,11 +112,14 @@ const PopularArticleCard: React.FC<{
 
         {/* Image Container - Responsive heights */}
         <div className="relative h-48 sm:h-56 lg:h-48 xl:h-56 overflow-hidden">
-          <img
+          <Image
             src={article.image}
             alt={article.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={false}
+            quality={85}
           />
 
           {/* Gradient Overlay */}

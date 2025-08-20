@@ -1,6 +1,6 @@
 "use client";
 
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -25,6 +25,16 @@ interface CTAAnalytics {
   category: string;
   label: string;
 }
+
+// Google Analytics gtag function type
+type GtagFunction = (
+  command: "event",
+  eventName: string,
+  eventParams: {
+    event_category: string;
+    event_label: string;
+  }
+) => void;
 
 // Icon components
 const IconCheck = ({ className }: { className: string }) => (
@@ -153,7 +163,7 @@ const Hero = () => {
       // Analytics tracking
       if (analytics && typeof window !== "undefined" && "gtag" in window) {
         try {
-          (window as any).gtag("event", analytics.event, {
+          (window.gtag as GtagFunction)("event", analytics.event, {
             event_category: analytics.category,
             event_label: analytics.label,
           });

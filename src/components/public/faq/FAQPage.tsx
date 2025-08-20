@@ -17,7 +17,7 @@ import {
   VideoContent,
 } from "@/data/faqData";
 import CTA from "@/components/ui/cta";
-
+import Image from "next/image";
 interface VideoPlayerProps {
   video: VideoContent;
   className?: string;
@@ -81,10 +81,13 @@ const FAQItem = ({ faq, isOpen, onToggle }: FAQItemProps) => {
           </p>
           {faq.imageUrl && (
             <div className="mt-4">
-              <img
+              <Image
                 src={faq.imageUrl}
                 alt="Alur penanganan"
+                width={800} // Set appropriate width
+                height={600} // Set appropriate height
                 className="max-w-full h-auto rounded-xl shadow-md"
+                style={{ width: "auto", height: "auto" }} // Maintain aspect ratio
               />
             </div>
           )}
