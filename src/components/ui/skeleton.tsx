@@ -1,6 +1,5 @@
-
 // components/ui/skeleton.tsx
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/lib/utils";
 
 function Skeleton({
   className,
@@ -11,7 +10,7 @@ function Skeleton({
       className={cn("animate-pulse rounded-md bg-gray-200", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Skeleton }
+export { Skeleton };

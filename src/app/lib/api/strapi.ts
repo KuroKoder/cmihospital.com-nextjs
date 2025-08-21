@@ -204,13 +204,15 @@ async function apiFetch<T>(
 }
 
 /**
- * Build optimized query string from filters
+ * Build optimized query string from filters using Strapi v5 syntax
  */
 function buildQueryString(filters: Partial<ArticleFilters> = {}): string {
   const params = new URLSearchParams();
 
-  // Population strategy - use specific fields for better performance
-  params.append("populate", "cover,author,category");
+  // Strapi v5 populate syntax - populate specific relations
+  params.append("populate[cover]", "true");
+  params.append("populate[author]", "true");
+  params.append("populate[category]", "true");
 
   // Pagination
   if (filters.page) {
@@ -288,11 +290,21 @@ export async function testApiConnection() {
     };
   }
 
-  // Test different populate strategies
+  // Test different populate strategies for Strapi v5
   const testStrategies = [
-    { name: "basic", query: "populate=cover,author,category" },
-    { name: "asterisk", query: "populate=*" },
-    { name: "minimal", query: "" },
+    {
+      name: "v5-specific",
+      query:
+        "populate[cover]=true&populate[author]=true&populate[category]=true",
+    },
+    {
+      name: "v5-asterisk",
+      query: "populate=*",
+    },
+    {
+      name: "minimal",
+      query: "",
+    },
   ];
 
   for (const strategy of testStrategies) {
@@ -380,11 +392,17 @@ export async function fetchArticleBySlug(slug: string) {
   }
 
   try {
-    const queryString = new URLSearchParams({
+    const params = new URLSearchParams({
       "filters[slug][$eq]": slug.trim(),
-      populate: "cover,author,category",
       publicationState: "live",
-    }).toString();
+    });
+
+    // Add Strapi v5 populate syntax
+    params.append("populate[cover]", "true");
+    params.append("populate[author]", "true");
+    params.append("populate[category]", "true");
+
+    const queryString = params.toString();
 
     devLog(`📖 Fetching article by slug: ${slug}`);
 
@@ -582,8 +600,3 @@ export const strapiApi = {
   testApiConnection,
   debugApiConfig,
 };
-
-export const fetchFeaturedArticles = strapiApi.fetchFeaturedArticles;
-export const fetchArticlesByCategory = strapiApi.fetchArticlesByCategory;
-export const fetchRelatedArticles = strapiApi.fetchRelatedArticles;
-export const getCategoryArticleCounts = strapiApi.getCategoryArticleCounts;
