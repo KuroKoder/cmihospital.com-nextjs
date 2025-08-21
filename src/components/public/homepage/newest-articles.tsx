@@ -3,97 +3,127 @@ import { ArrowRight, User, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import ArticleCard from "@/components/public/articles/ArticleCard";
 import { useState, useEffect } from "react";
-import {
-  fetchFeaturedArticles,
-  fetchCategories,
-} from "@/app/lib/api/client-strapi";
 import { Article, Category } from "@/types/article";
 import Image from "next/image";
 
-// Komponen utama
+// Simplified client API functions
+const clientApi = {
+  async fetchFeaturedArticles(limit = 6): Promise<Article[]> {
+    try {
+      const response = await fetch(`/api/articles/featured?limit=${limit}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        cache: process.env.NODE_ENV === "development" ? "no-store" : "default",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.articles || [];
+    } catch (error) {
+      console.error("Error fetching featured articles:", error);
+      return [];
+    }
+  },
+
+  async fetchCategories(): Promise<Category[]> {
+    try {
+      const response = await fetch("/api/categories", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        cache: process.env.NODE_ENV === "development" ? "no-store" : "default",
+      });
+
+      if (!response.ok) {
+        // Return default categories on error
+        return [
+          {
+            id: "all",
+            name: "Semua Kategori",
+            slug: "all",
+            description: "Tampilkan semua artikel",
+          },
+        ];
+      }
+
+      const data = await response.json();
+      return data.categories || [];
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return [
+        {
+          id: "all",
+          name: "Semua Kategori",
+          slug: "all",
+          description: "Tampilkan semua artikel",
+        },
+      ];
+    }
+  },
+};
+
+// Loading component
+function LoadingState() {
+  return (
+    <div className="w-full bg-white">
+      <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+          <span className="ml-3 text-gray-600">Memuat artikel...</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Error component
+function ErrorState({
+  error,
+  onRetry,
+}: {
+  error: string;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="w-full bg-white">
+      <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
+        <div className="text-center">
+          <div className="text-red-600 mb-4">{error}</div>
+          <button
+            onClick={onRetry}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Empty state component
+function EmptyState() {
+  return (
+    <div className="w-full bg-white">
+      <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
+        <div className="text-center text-gray-600">
+          Belum ada artikel tersedia.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main component
 export default function HealthArticlesSection() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch data on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [fetchedArticles, fetchedCategories] = await Promise.all([
-          fetchFeaturedArticles(6), // Get 6 articles for display
-          fetchCategories(),
-        ]);
-
-        setArticles(fetchedArticles);
-        setCategories(fetchedCategories);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Gagal memuat artikel. Silakan coba lagi nanti.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="w-full bg-white">
-        <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-            <span className="ml-3 text-gray-600">Memuat artikel...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show error state
-  if (error) {
-    return (
-      <div className="w-full bg-white">
-        <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
-          <div className="text-center">
-            <div className="text-red-600 mb-4">{error}</div>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg"
-            >
-              Coba Lagi
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Get latest articles (first 3)
-  const latestArticles = articles.slice(0, 3);
-
-  // Get featured article (first one or fallback)
-  const latestArticle =
-    articles.find((article) => article.isFeatured) || articles[0];
-
-  // Handle case when no articles available
-  if (!latestArticle) {
-    return (
-      <div className="w-full bg-white">
-        <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
-          <div className="text-center text-gray-600">
-            Belum ada artikel tersedia.
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Format tanggal
+  // Format date utility
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = {
@@ -104,39 +134,91 @@ export default function HealthArticlesSection() {
     return date.toLocaleDateString("id-ID", options);
   };
 
+  // Fetch data function
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [fetchedArticles, fetchedCategories] = await Promise.all([
+        clientApi.fetchFeaturedArticles(6),
+        clientApi.fetchCategories(),
+      ]);
+
+      setArticles(fetchedArticles);
+      setCategories(fetchedCategories);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Gagal memuat artikel. Silakan coba lagi nanti.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data on mount
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Handle retry
+  const handleRetry = () => {
+    fetchData();
+  };
+
+  // Show loading state
+  if (loading) {
+    return <LoadingState />;
+  }
+
+  // Show error state
+  if (error) {
+    return <ErrorState error={error} onRetry={handleRetry} />;
+  }
+
+  // Get latest articles and featured article
+  const latestArticles = articles.slice(0, 3);
+  const featuredArticle =
+    articles.find((article) => article.isFeatured) || articles[0];
+
+  // Show empty state if no articles
+  if (!featuredArticle) {
+    return <EmptyState />;
+  }
+
   return (
     <div className="w-full bg-white">
-      {/* Hero Section dengan artikel unggulan */}
+      {/* Hero Section with Featured Article */}
       <div className="relative bg-gradient-to-r from-green-50 to-green-100 py-16">
         <div className="container mx-auto px-6 md:px-10 lg:px-16">
           <div className="flex flex-col md:flex-row items-center gap-10">
+            {/* Content */}
             <div className="w-full md:w-1/2 space-y-5">
               <span className="bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full">
                 Artikel Unggulan
               </span>
               <h1 className="text-3xl md:text-4xl font-bold text-green-800 leading-tight">
-                {latestArticle.title}
+                {featuredArticle.title}
               </h1>
-              <p className="text-gray-600 text-base text-justify">
-                {latestArticle.description}
+              <p className="text-gray-600 text-base text-justify line-clamp-3">
+                {featuredArticle.description}
               </p>
 
               <div className="flex items-center gap-5 text-sm text-gray-500">
                 <div className="flex items-center gap-1.5">
                   <User size={16} className="text-green-600" />
-                  <span>{latestArticle.author}</span>
+                  <span>{featuredArticle.author}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar size={16} className="text-green-600" />
-                  <span>{formatDate(latestArticle.date)}</span>
+                  <span>{formatDate(featuredArticle.date)}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Clock size={16} className="text-green-600" />
-                  <span>{latestArticle.readTime}</span>
+                  <span>{featuredArticle.readTime}</span>
                 </div>
               </div>
 
-              <Link href={`/artikel-kesehatan/${latestArticle.slug}`}>
+              <Link href={`/artikel-kesehatan/${featuredArticle.slug}`}>
                 <button className="mt-4 inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-300">
                   Baca Selengkapnya
                   <ArrowRight size={16} />
@@ -144,13 +226,14 @@ export default function HealthArticlesSection() {
               </Link>
             </div>
 
+            {/* Image */}
             <div className="w-full md:w-1/2">
-              <Link href={`/artikel-kesehatan/${latestArticle.slug}`}>
+              <Link href={`/artikel-kesehatan/${featuredArticle.slug}`}>
                 <div className="relative overflow-hidden rounded-xl shadow-lg cursor-pointer group">
                   <div className="relative w-full h-64 md:h-96">
                     <Image
-                      src={latestArticle.image}
-                      alt={latestArticle.title}
+                      src={featuredArticle.image}
+                      alt={featuredArticle.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 768px) 100vw, 50vw"
@@ -161,7 +244,7 @@ export default function HealthArticlesSection() {
                   <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-green-900/70 to-transparent p-6">
                     <div className="flex items-center justify-between">
                       <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-md">
-                        {latestArticle.categoryName}
+                        {featuredArticle.categoryName}
                       </span>
                     </div>
                   </div>
@@ -172,7 +255,7 @@ export default function HealthArticlesSection() {
         </div>
       </div>
 
-      {/* Section Artikel Kesehatan */}
+      {/* Latest Articles Section */}
       <div className="container mx-auto py-16 px-6 md:px-10 lg:px-16">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-10">
           <div>
@@ -194,7 +277,7 @@ export default function HealthArticlesSection() {
           </div>
         </div>
 
-        {/* Grid artikel - menggunakan ArticleCard component */}
+        {/* Articles Grid */}
         {latestArticles.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {latestArticles.map((article) => (

@@ -1,29 +1,34 @@
 // app/api/categories/route.ts
-import { NextResponse } from "next/server";
-import { strapiApi } from "@/app/lib/api/strapi";
+import { NextRequest, NextResponse } from "next/server";
+import { fetchCategories } from "../../lib/api/strapi";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    console.log("📂 API Route - Fetching categories");
+    console.log("🔄 API Route - Fetching categories");
 
-    const categories = await strapiApi.fetchCategories();
+    const categories = await fetchCategories();
 
-    return NextResponse.json(categories, {
-      headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
-      },
-    });
+    console.log("✅ API Route - Categories fetched:", categories.length);
+
+    return NextResponse.json({ categories });
   } catch (error) {
     console.error("❌ API Route Error (categories):", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch categories";
+
+    // Return default categories on error
+    const defaultCategories = [
+      {
+        id: "all",
+        name: "Semua Kategori",
+        slug: "all",
+        description: "Tampilkan semua artikel",
+      },
+    ];
+
     return NextResponse.json(
-      [
-        {
-          id: "all",
-          name: "Semua Kategori",
-          slug: "all",
-          description: "Tampilkan semua artikel",
-        },
-      ],
+      { categories: defaultCategories, error: errorMessage },
       { status: 500 }
     );
   }

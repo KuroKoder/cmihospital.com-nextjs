@@ -1,13 +1,14 @@
 // src/app/(public)/artikel-kesehatan/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import type { Article } from "@/types/article"; // Import Article type
+import type { Article } from "@/types/article";
 import MainLayout from "@/components/layout/main-layout";
+// ✅ PERBAIKAN: Import dari server-side API untuk server components
 import {
   fetchArticleBySlug,
-  fetchRelatedArticles,
   fetchArticles,
-} from "@/lib/api/strapi";
+  strapiApi,
+} from "../../../lib/api/strapi"; // Server-side imports
 import BackNavigation from "@/components/public/detailArticle/BackNavigation";
 import Breadcrumb from "@/components/public/detailArticle/BreadCrumb";
 import HeaderDetail from "@/components/public/detailArticle/HeaderDetail";
@@ -28,7 +29,7 @@ export async function generateStaticParams() {
       sortBy: "newest",
     });
 
-    const paths = articles.map((article) => ({
+    const paths = articles.map((article: Article) => ({
       slug: article.slug,
     }));
 
@@ -50,9 +51,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const artikel = (await fetchArticleBySlug(
-    resolvedParams.slug
-  )) as Article | null;
+  const artikel = await fetchArticleBySlug(resolvedParams.slug);
 
   if (!artikel) {
     return {
@@ -93,9 +92,9 @@ export async function generateMetadata({
       ],
       publishedTime: artikel.publishedAt,
       modifiedTime: artikel.updatedAt || artikel.publishedAt,
-      authors: [artikel.author],
+      authors: artikel.author ? [artikel.author] : [],
       section: artikel.categoryName,
-      tags: artikel.tags,
+      tags: artikel.tags || [],
     },
 
     // Twitter Card
@@ -105,30 +104,36 @@ export async function generateMetadata({
       creator: "@cmihospital",
       title: artikel.title,
       description: artikel.description?.substring(0, 160),
-      images: [
-        artikel.image?.startsWith("http")
-          ? artikel.image
-          : `${baseUrl}${artikel.image}`,
-      ],
+      images: artikel.image
+        ? [
+            artikel.image.startsWith("http")
+              ? artikel.image
+              : `${baseUrl}${artikel.image}`,
+          ]
+        : [],
     },
 
     // Additional SEO enhancements
     keywords: [
-      ...artikel.tags,
+      ...(artikel.tags || []),
       "kesehatan",
       "artikel kesehatan",
       "tips kesehatan",
       "klinik cmi",
       "pelayanan kesehatan",
-      artikel.categoryName,
-    ].join(", "),
+      artikel.categoryName || "umum",
+    ]
+      .filter(Boolean)
+      .join(", "),
 
-    authors: [
-      {
-        name: artikel.author,
-        url: `${baseUrl}/author/${artikel.authorSlug || "team"}`,
-      },
-    ],
+    authors: artikel.author
+      ? [
+          {
+            name: artikel.author,
+            url: `${baseUrl}/author/${artikel.authorSlug || "team"}`,
+          },
+        ]
+      : [],
     category: artikel.categoryName,
 
     // Canonical URL
@@ -140,10 +145,11 @@ export async function generateMetadata({
     other: {
       "article:published_time": artikel.publishedAt,
       "article:modified_time": artikel.updatedAt || artikel.publishedAt,
-      "article:author": artikel.author,
-      "article:section": artikel.categoryName,
-      "article:tag": artikel.tags.join(","),
-      "reading-time": artikel.readTime,
+      ...(artikel.author && { "article:author": artikel.author }),
+      ...(artikel.categoryName && { "article:section": artikel.categoryName }),
+      ...(artikel.tags &&
+        artikel.tags.length > 0 && { "article:tag": artikel.tags.join(",") }),
+      ...(artikel.readTime && { "reading-time": artikel.readTime }),
     },
   };
 }
@@ -157,18 +163,16 @@ export default async function ArtikelDetailPage({
   const resolvedParams = await params;
 
   // Fetch artikel dengan error handling
-  const artikel = (await fetchArticleBySlug(
-    resolvedParams.slug
-  )) as Article | null;
+  const artikel = await fetchArticleBySlug(resolvedParams.slug);
 
   if (!artikel) {
     return notFound();
   }
 
-  // Fetch related articles dengan error handling
+  // ✅ PERBAIKAN: Gunakan server-side API dengan proper typing
   let relatedArticles: Article[] = [];
   try {
-    relatedArticles = await fetchRelatedArticles(artikel, 6);
+    relatedArticles = await strapiApi.fetchRelatedArticles(artikel, 6);
   } catch (error) {
     console.warn("⚠️ Error fetching related articles:", error);
     // Continue without related articles
@@ -182,21 +186,25 @@ export default async function ArtikelDetailPage({
     "@type": "Article",
     headline: artikel.title,
     description: artikel.description,
-    image: {
-      "@type": "ImageObject",
-      url: artikel.image?.startsWith("http")
-        ? artikel.image
-        : `${baseUrl}${artikel.image}`,
-      width: 1200,
-      height: 630,
-      caption: artikel.title,
-    },
-    author: {
-      "@type": "Person",
-      name: artikel.author,
-      email: artikel.authorEmail,
-      url: `${baseUrl}/author/${artikel.authorSlug || "team"}`,
-    },
+    image: artikel.image
+      ? {
+          "@type": "ImageObject",
+          url: artikel.image.startsWith("http")
+            ? artikel.image
+            : `${baseUrl}${artikel.image}`,
+          width: 1200,
+          height: 630,
+          caption: artikel.title,
+        }
+      : undefined,
+    author: artikel.author
+      ? {
+          "@type": "Person",
+          name: artikel.author,
+          email: artikel.authorEmail,
+          url: `${baseUrl}/author/${artikel.authorSlug || "team"}`,
+        }
+      : undefined,
     publisher: {
       "@type": "Organization",
       name: "Klinik Utama CMI",
@@ -228,10 +236,12 @@ export default async function ArtikelDetailPage({
     inLanguage: "id-ID",
     isAccessibleForFree: true,
     genre: "health",
-    about: {
-      "@type": "Thing",
-      name: artikel.categoryName,
-    },
+    about: artikel.categoryName
+      ? {
+          "@type": "Thing",
+          name: artikel.categoryName,
+        }
+      : undefined,
   };
 
   // Tambahan JSON-LD untuk breadcrumb
@@ -254,7 +264,7 @@ export default async function ArtikelDetailPage({
       {
         "@type": "ListItem",
         position: 3,
-        name: artikel.categoryName,
+        name: artikel.categoryName || "Umum",
         item: `${baseUrl}/artikel-kesehatan/kategori/${
           artikel.categorySlug || "umum"
         }`,
@@ -312,7 +322,7 @@ export default async function ArtikelDetailPage({
                   <div className="flex flex-col space-y-2">
                     <SocialShareButtons
                       title={artikel.title}
-                      description={artikel.description}
+                      description={artikel.description || ""}
                       slug={artikel.slug}
                     />
                   </div>
@@ -335,7 +345,7 @@ export default async function ArtikelDetailPage({
                       </span>
                       <SocialShareButtons
                         title={artikel.title}
-                        description={artikel.description}
+                        description={artikel.description || ""}
                         slug={artikel.slug}
                       />
                     </div>

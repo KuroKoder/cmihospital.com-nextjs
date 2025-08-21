@@ -22,7 +22,7 @@ import NewsletterSection from "@/components/public/articles/NewsletterSection";
 import MainLayout from "@/components/layout/main-layout";
 
 // Import API and types
-import { fetchArticles, fetchCategories } from "@/lib/api/strapi";
+import { fetchArticles, fetchCategories } from "../../lib/api/client-strapi";
 import {
   Article,
   Category,

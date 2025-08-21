@@ -1,44 +1,43 @@
 // app/api/articles/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { strapiApi } from "@/app/lib/api/strapi";
+import { fetchArticles } from "../../lib/api/strapi";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
 
-    // Parse query parameters
     const filters = {
-      page: searchParams.get("page") ? parseInt(searchParams.get("page")!) : 1,
+      page: searchParams.get("page")
+        ? parseInt(searchParams.get("page")!)
+        : undefined,
       pageSize: searchParams.get("pageSize")
-        ? Math.min(parseInt(searchParams.get("pageSize")!), 50)
-        : 10,
+        ? parseInt(searchParams.get("pageSize")!)
+        : undefined,
       search: searchParams.get("search") || undefined,
-      category:
-        searchParams.get("category") && searchParams.get("category") !== "all"
-          ? searchParams.get("category")!
-          : undefined,
+      category: searchParams.get("category") || undefined,
       sortBy:
         (searchParams.get("sortBy") as "newest" | "oldest" | "popular") ||
-        "newest",
+        undefined,
     };
 
-    console.log("📊 API Route - Fetching articles with filters:", filters);
+    console.log("🔄 API Route - Fetching articles with filters:", filters);
 
-    const result = await strapiApi.fetchArticles(filters);
+    const result = await fetchArticles(filters);
 
-    return NextResponse.json(result, {
-      headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
-      },
-    });
+    console.log("✅ API Route - Articles fetched:", result.articles.length);
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error("❌ API Route Error (articles):", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to fetch articles";
+
     return NextResponse.json(
       {
         articles: [],
         pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 },
-        error:
-          error instanceof Error ? error.message : "Failed to fetch articles",
+        error: errorMessage,
       },
       { status: 500 }
     );

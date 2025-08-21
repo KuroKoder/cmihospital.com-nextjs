@@ -4,9 +4,7 @@ import {
   StrapiArticle,
   StrapiCategory,
   Article,
-  Category,
   ArticleFilters,
-  PaginationMeta,
 } from "@/types/article";
 import {
   mapStrapiArticleToArticle,
@@ -22,22 +20,21 @@ const isServer = typeof window === "undefined";
 // Validation
 if (!STRAPI_BASE_URL) {
   throw new Error(
-    "❌ NEXT_PUBLIC_STRAPI_URL is required in environment variables"
+    "NEXT_PUBLIC_STRAPI_URL is required in environment variables"
   );
 }
 
-// Token validation with helpful messages
+// Development logging
 if (isDevelopment) {
-  console.log("🔍 Environment Debug:");
+  console.log("Environment Debug:");
   console.log("- NODE_ENV:", process.env.NODE_ENV);
   console.log("- STRAPI_BASE_URL:", STRAPI_BASE_URL);
   console.log("- Has TOKEN:", !!TOKEN_STRAPI_API);
   console.log("- Is Server:", isServer);
-  console.log("- Token length:", TOKEN_STRAPI_API?.length || 0);
 
   if (!TOKEN_STRAPI_API) {
-    console.error("🚨 STRAPI_API_TOKEN missing!");
-    console.log("📋 Steps to fix:");
+    console.warn("STRAPI_API_TOKEN missing - some requests may fail!");
+    console.log("Steps to fix:");
     console.log("1. Create .env.local in project root");
     console.log("2. Add: STRAPI_API_TOKEN=your-actual-token");
     console.log("3. Generate token in Strapi Admin > Settings > API Tokens");
@@ -47,19 +44,21 @@ if (isDevelopment) {
 
 const API_BASE_URL = `${STRAPI_BASE_URL}/api`;
 
-// === Logging Helpers ===
+// Logging Helpers
 function devLog(...args: unknown[]) {
   if (isDevelopment) console.log(...args);
 }
+
 function devWarn(...args: unknown[]) {
   if (isDevelopment) console.warn(...args);
 }
+
 function devError(...args: unknown[]) {
   if (isDevelopment) console.error(...args);
 }
 
 /**
- * Get authorization headers with validation
+ * Get authorization headers
  */
 function getAuthHeaders(): HeadersInit {
   const headers: HeadersInit = {
@@ -67,42 +66,29 @@ function getAuthHeaders(): HeadersInit {
     Accept: "application/json",
   };
 
-  if (
-    TOKEN_STRAPI_API &&
-    TOKEN_STRAPI_API !== "your-temporary-token-for-testing"
-  ) {
+  if (TOKEN_STRAPI_API && TOKEN_STRAPI_API.length > 10) {
     headers["Authorization"] = `Bearer ${TOKEN_STRAPI_API}`;
-    devLog("🔑 Using valid API token");
+    devLog("Using API token");
   } else {
-    devWarn("⚠️ No valid API token - requests will likely fail");
+    devWarn("No API token - requests may have limited access");
   }
 
   return headers;
 }
 
 /**
- * Enhanced fetch wrapper with comprehensive error handling
+ * Simplified fetch wrapper with error handling
  */
 async function apiFetch<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  // Validation
-  if (
-    !TOKEN_STRAPI_API ||
-    TOKEN_STRAPI_API === "your-temporary-token-for-testing"
-  ) {
-    throw new Error(
-      "❌ Valid STRAPI_API_TOKEN is required. Please check your environment variables."
-    );
-  }
-
   const url = `${API_BASE_URL}${endpoint}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000); // Increased timeout
+  const timeoutId = setTimeout(() => controller.abort(), 30000);
 
   try {
-    devLog("🔄 Fetching:", url);
+    devLog("Fetching:", url);
 
     const response = await fetch(url, {
       method: "GET",
@@ -111,91 +97,60 @@ async function apiFetch<T>(
         ...options?.headers,
       },
       signal: controller.signal,
-      cache: isDevelopment ? "no-store" : "force-cache", // Cache in production
+      cache: isDevelopment ? "no-store" : "force-cache",
       ...options,
     });
 
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      let errorMessage = "";
-      let troubleshooting = "";
+      let errorMessage = `HTTP ${response.status}`;
 
       try {
         const errorData = await response.json();
         errorMessage =
-          errorData.error?.message ||
-          errorData.message ||
-          `HTTP ${response.status}`;
+          errorData.error?.message || errorData.message || errorMessage;
       } catch {
-        const errorText = await response.text();
-        errorMessage = errorText || `HTTP ${response.status}`;
+        errorMessage = `HTTP ${response.status}: ${response.statusText}`;
       }
 
-      switch (response.status) {
-        case 400:
-          troubleshooting = isDevelopment
-            ? "\n🔧 Check your query parameters and filters"
-            : "";
-          break;
-        case 401:
-          errorMessage = "Authentication failed - Invalid API token";
-          troubleshooting = isDevelopment
-            ? "\n🔧 Steps to fix:\n1. Check STRAPI_API_TOKEN in .env.local\n2. Generate new token in Strapi admin\n3. Restart dev server"
-            : "";
-          break;
-        case 403:
-          errorMessage = "Access forbidden - Insufficient permissions";
-          troubleshooting = isDevelopment
-            ? "\n🔧 Steps to fix:\n1. Check API token permissions in Strapi admin\n2. Ensure token has 'find' permission for Articles/Categories\n3. Check if content types are published"
-            : "";
-          break;
-        case 404:
-          errorMessage = `Endpoint not found: ${endpoint}`;
-          troubleshooting = isDevelopment
-            ? "\n🔧 Check if the content type exists in Strapi"
-            : "";
-          break;
-        case 429:
-          errorMessage = "Too many requests - Rate limit exceeded";
-          break;
-        case 500:
-          errorMessage = "Strapi server error";
-          troubleshooting = isDevelopment
-            ? "\n🔧 Check Strapi server logs and database connection"
-            : "";
-          break;
-        default:
-          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      // Enhanced error messages for development
+      if (isDevelopment) {
+        switch (response.status) {
+          case 401:
+            errorMessage = "Authentication failed - Check API token";
+            break;
+          case 403:
+            errorMessage = "Access forbidden - Check token permissions";
+            break;
+          case 404:
+            errorMessage = `Endpoint not found: ${endpoint}`;
+            break;
+          case 500:
+            errorMessage = "Strapi server error";
+            break;
+        }
       }
 
-      const fullError = errorMessage + troubleshooting;
-      devError("❌ API Error:", fullError);
-      throw new Error(fullError);
+      devError("API Error:", errorMessage);
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
-    devLog(
-      "✅ API Response successful, data length:",
-      JSON.stringify(data).length
-    );
+    devLog("API Response successful");
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
 
     if (error instanceof Error) {
       if (error.name === "AbortError") {
-        throw new Error(
-          `⏱️ Request timeout: ${STRAPI_BASE_URL} took too long to respond`
-        );
+        throw new Error(`Request timeout: ${STRAPI_BASE_URL}`);
       }
       if (
         error.name === "TypeError" &&
         error.message.includes("Failed to fetch")
       ) {
-        throw new Error(
-          `🌐 Network error: Cannot connect to ${STRAPI_BASE_URL}. Check server status.`
-        );
+        throw new Error(`Network error: Cannot connect to ${STRAPI_BASE_URL}`);
       }
     }
 
@@ -204,15 +159,13 @@ async function apiFetch<T>(
 }
 
 /**
- * Build optimized query string from filters using Strapi v5 syntax
+ * Build query string for Strapi API
  */
 function buildQueryString(filters: Partial<ArticleFilters> = {}): string {
   const params = new URLSearchParams();
 
-  // Strapi v5 populate syntax - populate specific relations
-  params.append("populate[cover]", "true");
-  params.append("populate[author]", "true");
-  params.append("populate[category]", "true");
+  // Populate all relations
+  params.append("populate", "*");
 
   // Pagination
   if (filters.page) {
@@ -222,11 +175,11 @@ function buildQueryString(filters: Partial<ArticleFilters> = {}): string {
     params.append(
       "pagination[pageSize]",
       Math.min(filters.pageSize, 100).toString()
-    ); // Limit max page size
+    );
   }
 
   // Search
-  if (filters.search && filters.search.trim()) {
+  if (filters.search?.trim()) {
     params.append("filters[title][$containsi]", filters.search.trim());
   }
 
@@ -236,27 +189,8 @@ function buildQueryString(filters: Partial<ArticleFilters> = {}): string {
   }
 
   // Sorting
-  let sortField = "publishedAt";
-  let sortOrder = "desc";
-
-  switch (filters.sortBy) {
-    case "newest":
-      sortField = "publishedAt";
-      sortOrder = "desc";
-      break;
-    case "oldest":
-      sortField = "publishedAt";
-      sortOrder = "asc";
-      break;
-    case "popular":
-      sortField = "id";
-      sortOrder = "desc";
-      break;
-    default:
-      sortField = "publishedAt";
-      sortOrder = "desc";
-  }
-
+  const sortField = filters.sortBy === "oldest" ? "publishedAt" : "publishedAt";
+  const sortOrder = filters.sortBy === "oldest" ? "asc" : "desc";
   params.append("sort[0]", `${sortField}:${sortOrder}`);
 
   // Only published content
@@ -266,92 +200,47 @@ function buildQueryString(filters: Partial<ArticleFilters> = {}): string {
 }
 
 /**
- * Enhanced API connection test with detailed diagnostics
+ * Test API connection
  */
 export async function testApiConnection() {
-  const testResults = {
-    hasToken:
-      !!TOKEN_STRAPI_API &&
-      TOKEN_STRAPI_API !== "your-temporary-token-for-testing",
+  const testResult = {
+    hasToken: !!TOKEN_STRAPI_API,
+    tokenValid: TOKEN_STRAPI_API ? TOKEN_STRAPI_API.length > 10 : false,
     baseUrl: STRAPI_BASE_URL,
-    tokenValid: false,
-    strategy: "",
-    articlesFound: 0,
-    totalCount: 0,
-    errorType: "",
     timestamp: new Date().toISOString(),
   };
 
-  if (!testResults.hasToken) {
+  try {
+    const response = await apiFetch<StrapiResponse<StrapiArticle[]>>(
+      "/articles?pagination[pageSize]=1&populate=*"
+    );
+
+    return {
+      success: true,
+      message: "API connection successful",
+      details: {
+        ...testResult,
+        articlesFound: response.data?.length || 0,
+        totalCount: response.meta?.pagination?.total || 0,
+      },
+    };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       success: false,
-      message: "❌ No valid API token configured",
-      details: testResults,
+      message: "API connection failed",
+      details: { ...testResult, errorType: errorMessage },
     };
   }
-
-  // Test different populate strategies for Strapi v5
-  const testStrategies = [
-    {
-      name: "v5-specific",
-      query:
-        "populate[cover]=true&populate[author]=true&populate[category]=true",
-    },
-    {
-      name: "v5-asterisk",
-      query: "populate=*",
-    },
-    {
-      name: "minimal",
-      query: "",
-    },
-  ];
-
-  for (const strategy of testStrategies) {
-    try {
-      const testQuery = `/articles?pagination[pageSize]=1&${strategy.query}`;
-      devLog(`🧪 Testing ${strategy.name} strategy...`);
-
-      const response = await apiFetch<StrapiResponse<StrapiArticle[]>>(
-        testQuery
-      );
-
-      return {
-        success: true,
-        message: `✅ API connection successful using '${strategy.name}' strategy`,
-        details: {
-          ...testResults,
-          tokenValid: true,
-          strategy: strategy.name,
-          articlesFound: response.data?.length || 0,
-          totalCount: response.meta?.pagination?.total || 0,
-        },
-      };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      devWarn(`⚠️ Strategy '${strategy.name}' failed:`, errorMessage);
-
-      testResults.errorType = errorMessage;
-      continue;
-    }
-  }
-
-  return {
-    success: false,
-    message: "❌ All connection strategies failed",
-    details: testResults,
-  };
 }
 
 /**
- * Fetch articles with enhanced error handling
+ * Fetch articles with filters
  */
 export async function fetchArticles(filters: Partial<ArticleFilters> = {}) {
   try {
     const queryString = buildQueryString(filters);
-    devLog("📝 Fetching articles with filters:", filters);
-    devLog("🔗 Query string:", queryString);
+    devLog("Fetching articles with filters:", filters);
 
     const response = await apiFetch<StrapiResponse<StrapiArticle[]>>(
       `/articles?${queryString}`
@@ -366,13 +255,13 @@ export async function fetchArticles(filters: Partial<ArticleFilters> = {}) {
     };
 
     devLog(
-      `✅ Successfully fetched ${articles.length} articles (${pagination.total} total)`
+      `Successfully fetched ${articles.length} articles (${pagination.total} total)`
     );
 
     return { articles, pagination };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    devError("❌ Error fetching articles:", errorMessage);
+    devError("Error fetching articles:", errorMessage);
 
     return {
       articles: [],
@@ -383,44 +272,38 @@ export async function fetchArticles(filters: Partial<ArticleFilters> = {}) {
 }
 
 /**
- * Fetch single article by slug with caching
+ * Fetch single article by slug
  */
 export async function fetchArticleBySlug(slug: string) {
-  if (!slug || slug.trim() === "") {
-    devError("❌ Invalid slug provided");
+  if (!slug?.trim()) {
+    devError("Invalid slug provided");
     return null;
   }
 
   try {
     const params = new URLSearchParams({
       "filters[slug][$eq]": slug.trim(),
+      populate: "*",
       publicationState: "live",
     });
 
-    // Add Strapi v5 populate syntax
-    params.append("populate[cover]", "true");
-    params.append("populate[author]", "true");
-    params.append("populate[category]", "true");
-
-    const queryString = params.toString();
-
-    devLog(`📖 Fetching article by slug: ${slug}`);
+    devLog(`Fetching article by slug: ${slug}`);
 
     const response = await apiFetch<StrapiResponse<StrapiArticle[]>>(
-      `/articles?${queryString}`
+      `/articles?${params.toString()}`
     );
 
-    if (!response.data || response.data.length === 0) {
-      devWarn(`⚠️ Article not found: ${slug}`);
+    if (!response.data?.length) {
+      devWarn(`Article not found: ${slug}`);
       return null;
     }
 
     const article = mapStrapiArticleToArticle(response.data[0]);
-    devLog("✅ Successfully fetched article:", article.title);
+    devLog("Successfully fetched article:", article.title);
     return article;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    devError("❌ Error fetching article by slug:", errorMessage);
+    devError("Error fetching article by slug:", errorMessage);
     return null;
   }
 }
@@ -439,44 +322,43 @@ export async function fetchCategories() {
   ];
 
   try {
-    devLog("📂 Fetching categories...");
+    devLog("Fetching categories...");
     const response = await apiFetch<StrapiResponse<StrapiCategory[]>>(
-      "/categories?publicationState=live"
+      "/categories?populate=*&publicationState=live"
     );
 
     const categories = response.data?.map(mapStrapiCategoryToCategory) || [];
-    devLog(`✅ Successfully fetched ${categories.length} categories`);
+    devLog(`Successfully fetched ${categories.length} categories`);
 
     return [...defaultCategories, ...categories];
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    devError("❌ Error fetching categories:", errorMessage);
+    devError("Error fetching categories:", errorMessage);
     return defaultCategories;
   }
 }
 
 /**
- * Debug function with comprehensive environment info
+ * Debug function for development
  */
 export function debugApiConfig() {
   if (!isDevelopment) return;
 
-  console.group("🔧 === Strapi API Configuration Debug ===");
-  console.log("📍 Environment:", process.env.NODE_ENV);
-  console.log("🌐 STRAPI_BASE_URL:", STRAPI_BASE_URL);
-  console.log("🔗 API_BASE_URL:", API_BASE_URL);
-  console.log("🔑 Has STRAPI_API_TOKEN:", !!TOKEN_STRAPI_API);
+  console.group("=== Strapi API Configuration Debug ===");
+  console.log("Environment:", process.env.NODE_ENV);
+  console.log("STRAPI_BASE_URL:", STRAPI_BASE_URL);
+  console.log("API_BASE_URL:", API_BASE_URL);
+  console.log("Has STRAPI_API_TOKEN:", !!TOKEN_STRAPI_API);
   console.log(
-    "✅ Token is valid:",
-    !!TOKEN_STRAPI_API &&
-      TOKEN_STRAPI_API !== "your-temporary-token-for-testing"
+    "Token is valid:",
+    !!TOKEN_STRAPI_API && TOKEN_STRAPI_API.length > 10
   );
-  console.log("🖥️ Is Server:", isServer);
-  console.log("⏰ Timestamp:", new Date().toISOString());
+  console.log("Is Server:", isServer);
+  console.log("Timestamp:", new Date().toISOString());
 
   if (TOKEN_STRAPI_API) {
-    console.log("🔐 Token length:", TOKEN_STRAPI_API.length);
-    console.log("🔐 Token preview:", TOKEN_STRAPI_API.substring(0, 20) + "...");
+    console.log("Token length:", TOKEN_STRAPI_API.length);
+    console.log("Token preview:", TOKEN_STRAPI_API.substring(0, 20) + "...");
   }
 
   console.groupEnd();
@@ -487,116 +369,146 @@ if (isDevelopment) {
   debugApiConfig();
 }
 
-// Export all functions
-export const strapiApi = {
-  fetchArticles,
-  fetchArticleBySlug,
-  fetchCategories,
-  fetchArticlesByCategory: async (
-    categorySlug: string,
-    filters: Partial<ArticleFilters> = {}
-  ) => {
-    try {
-      const categoryResponse = await apiFetch<StrapiResponse<StrapiCategory[]>>(
-        `/categories?filters[slug][$eq]=${categorySlug}&publicationState=live`
-      );
+/**
+ * Fetch articles by category
+ */
+export async function fetchArticlesByCategory(
+  categorySlug: string,
+  filters: Partial<ArticleFilters> = {}
+) {
+  try {
+    const categoryResponse = await apiFetch<StrapiResponse<StrapiCategory[]>>(
+      `/categories?filters[slug][$eq]=${categorySlug}&populate=*&publicationState=live`
+    );
 
-      const category =
-        categoryResponse.data && categoryResponse.data.length > 0
-          ? mapStrapiCategoryToCategory(categoryResponse.data[0])
-          : null;
+    const category = categoryResponse.data?.[0]
+      ? mapStrapiCategoryToCategory(categoryResponse.data[0])
+      : null;
 
-      if (!category) {
-        return {
-          articles: [],
-          pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 },
-          category: null,
-        };
-      }
-
-      const articlesResult = await fetchArticles({
-        ...filters,
-        category: category.id,
-      });
-
-      return { ...articlesResult, category };
-    } catch (error) {
-      devError(
-        "❌ Error fetching articles by category:",
-        error instanceof Error ? error.message : error
-      );
+    if (!category) {
       return {
         articles: [],
         pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 },
         category: null,
       };
     }
-  },
-  searchArticles: (query: string, filters: Partial<ArticleFilters> = {}) => {
-    return fetchArticles({ ...filters, search: query });
-  },
-  fetchFeaturedArticles: async (limit: number = 6) => {
-    try {
-      const result = await fetchArticles({
-        pageSize: limit,
-        sortBy: "newest",
-      });
-      return result.articles;
-    } catch (error) {
-      devError(
-        "❌ Error fetching featured articles:",
-        error instanceof Error ? error.message : error
-      );
-      return [];
-    }
-  },
-  fetchRelatedArticles: async (currentArticle: Article, limit: number = 4) => {
-    try {
-      const result = await fetchArticles({
-        category: currentArticle.category,
-        pageSize: limit + 1,
-        sortBy: "newest",
-      });
 
-      return result.articles
-        .filter((article) => article.slug !== currentArticle.slug)
-        .slice(0, limit);
-    } catch (error) {
-      devError(
-        "❌ Error fetching related articles:",
-        error instanceof Error ? error.message : error
-      );
-      return [];
-    }
-  },
-  getCategoryArticleCounts: async () => {
-    try {
-      const categories = await fetchCategories();
-      const counts: Record<string, number> = {};
+    const articlesResult = await fetchArticles({
+      ...filters,
+      category: category.id,
+    });
 
-      for (const category of categories) {
-        if (category.id === "all") continue;
+    return { ...articlesResult, category };
+  } catch (error) {
+    devError(
+      "Error fetching articles by category:",
+      error instanceof Error ? error.message : error
+    );
+    return {
+      articles: [],
+      pagination: { page: 1, pageSize: 10, pageCount: 0, total: 0 },
+      category: null,
+    };
+  }
+}
 
-        try {
-          const result = await fetchArticles({
-            category: category.id,
-            pageSize: 1,
-          });
-          counts[category.id] = result.pagination.total;
-        } catch {
-          counts[category.id] = 0;
-        }
+/**
+ * Search articles
+ */
+export function searchArticles(
+  query: string,
+  filters: Partial<ArticleFilters> = {}
+) {
+  return fetchArticles({ ...filters, search: query });
+}
+
+/**
+ * Fetch featured articles
+ */
+export async function fetchFeaturedArticles(limit: number = 6) {
+  try {
+    const result = await fetchArticles({
+      pageSize: limit,
+      sortBy: "newest",
+    });
+    return result.articles;
+  } catch (error) {
+    devError(
+      "Error fetching featured articles:",
+      error instanceof Error ? error.message : error
+    );
+    return [];
+  }
+}
+
+/**
+ * Fetch related articles
+ */
+export async function fetchRelatedArticles(
+  currentArticle: Article,
+  limit: number = 4
+) {
+  try {
+    const result = await fetchArticles({
+      category: currentArticle.category,
+      pageSize: limit + 1,
+      sortBy: "newest",
+    });
+
+    return result.articles
+      .filter((article) => article.slug !== currentArticle.slug)
+      .slice(0, limit);
+  } catch (error) {
+    devError(
+      "Error fetching related articles:",
+      error instanceof Error ? error.message : error
+    );
+    return [];
+  }
+}
+
+/**
+ * Get category article counts
+ */
+export async function getCategoryArticleCounts() {
+  try {
+    const categories = await fetchCategories();
+    const counts: Record<string, number> = {};
+
+    for (const category of categories) {
+      if (category.id === "all") continue;
+
+      try {
+        const result = await fetchArticles({
+          category: category.id,
+          pageSize: 1,
+        });
+        counts[category.id] = result.pagination.total;
+      } catch {
+        counts[category.id] = 0;
       }
-
-      return counts;
-    } catch (error) {
-      devError(
-        "❌ Error getting category article counts:",
-        error instanceof Error ? error.message : error
-      );
-      return {};
     }
-  },
+
+    return counts;
+  } catch (error) {
+    devError(
+      "Error getting category article counts:",
+      error instanceof Error ? error.message : error
+    );
+    return {};
+  }
+}
+
+// Export API object with all functions
+export const strapiApi = {
+  fetchArticles,
+  fetchArticleBySlug,
+  fetchCategories,
+  fetchArticlesByCategory,
+  searchArticles,
+  fetchFeaturedArticles,
+  fetchRelatedArticles,
+  getCategoryArticleCounts,
   testApiConnection,
   debugApiConfig,
 };
