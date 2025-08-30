@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ```
 cmihospital.com
 ├─ eslint.config.mjs
@@ -217,3 +218,236 @@ cmihospital.com
 └─ tsconfig.json
 
 ```
+=======
+```
+cmihospital.com
+├─ eslint.config.mjs
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ public
+│  ├─ file.svg
+│  ├─ globe.svg
+│  ├─ images
+│  │  ├─ about
+│  │  │  ├─ cmi.webp
+│  │  │  ├─ cmigedung.png
+│  │  │  └─ grsetra.png
+│  │  ├─ articles
+│  │  │  ├─ articlepage
+│  │  │  │  ├─ deteksi-kanker.png
+│  │  │  │  ├─ diabetes-tipe-2.png
+│  │  │  │  ├─ imunisasi-bayi.png
+│  │  │  │  ├─ jantung.png
+│  │  │  │  ├─ kecemasan-dan-stres.png
+│  │  │  │  ├─ nutrisi-ibu-hamil.png
+│  │  │  │  ├─ olahraga-rutin.png
+│  │  │  │  └─ sarapan-sehat.png
+│  │  │  └─ homepage
+│  │  │     ├─ deteksi-diabetes.png
+│  │  │     ├─ kesehatan-jantung.png
+│  │  │     ├─ nutrisi-penting.png
+│  │  │     ├─ olahraga-rutin.png
+│  │  │     └─ tidur-berkualitas.png
+│  │  ├─ fasilitas
+│  │  │  ├─ amenities
+│  │  │  │  ├─ apotek.png
+│  │  │  │  ├─ area-parkir-luas.png
+│  │  │  │  ├─ kafetaria.png
+│  │  │  │  └─ ruang-ibadah.png
+│  │  │  ├─ chronic
+│  │  │  │  ├─ diabetes.png
+│  │  │  │  ├─ gagal-ginjal.png
+│  │  │  │  ├─ jantung.png
+│  │  │  │  └─ kanker.png
+│  │  │  ├─ general
+│  │  │  │  ├─ konsultasi-dokter-umum.png
+│  │  │  │  ├─ pemeriksaan-kesehatan-rutin.png
+│  │  │  │  ├─ pengobatan-penyakit-ringan.png
+│  │  │  │  └─ vaksinasi.png
+│  │  │  ├─ inpatient
+│  │  │  │  ├─ kamar-rawat-inap-nyaman.JPG
+│  │  │  │  └─ perawatan-24-jam.png
+│  │  │  └─ laboratory
+│  │  │     ├─ pemeriksaan-darah-lengkap.png
+│  │  │     ├─ tes-fungsi-organ.png
+│  │  │     ├─ tes-genetik.png
+│  │  │     └─ tes-hormon.png
+│  │  ├─ hero
+│  │  │  ├─ cmi.webp
+│  │  │  ├─ Gedungcmi.jpg
+│  │  │  ├─ Hero-2.webp
+│  │  │  └─ HERO-3.webp
+│  │  ├─ logo
+│  │  │  └─ logo.svg
+│  │  ├─ services
+│  │  │  ├─ diabetes.png
+│  │  │  ├─ diabetes.svg
+│  │  │  ├─ diabetes1.svg
+│  │  │  ├─ ginjal.png
+│  │  │  ├─ ginjal.svg
+│  │  │  ├─ ginjal1.svg
+│  │  │  ├─ jantung.svg
+│  │  │  ├─ jantung1.svg
+│  │  │  ├─ kanker.jpg
+│  │  │  ├─ kanker.png
+│  │  │  ├─ kanker.svg
+│  │  │  ├─ kanker1.svg
+│  │  │  └─ laboratorium.webp
+│  │  └─ testimonials
+│  │     ├─ elis.jpg
+│  │     ├─ elis.webp
+│  │     ├─ erry.jpg
+│  │     ├─ eulis.jpg
+│  │     ├─ eulis.webp
+│  │     ├─ ida-rusida.jpg
+│  │     ├─ mustofa.jpg
+│  │     ├─ mustofa.webp
+│  │     ├─ nendra.jpg
+│  │     ├─ riyah.jpg
+│  │     └─ triana.jpg
+│  ├─ kidney.png
+│  ├─ next.svg
+│  ├─ site.webmanifest
+│  ├─ vercel.svg
+│  └─ window.svg
+├─ README.md
+├─ src
+│  ├─ app
+│  │  ├─ (public)
+│  │  │  ├─ artikel-kesehatan
+│  │  │  │  ├─ page.tsx
+│  │  │  │  └─ [slug]
+│  │  │  │     └─ page.tsx
+│  │  │  ├─ dokter
+│  │  │  │  └─ page.tsx
+│  │  │  ├─ faq
+│  │  │  │  └─ page.tsx
+│  │  │  ├─ fasilitas
+│  │  │  │  └─ page.tsx
+│  │  │  ├─ kontak
+│  │  │  │  └─ page.tsx
+│  │  │  ├─ tentang-kami
+│  │  │  │  └─ page.tsx
+│  │  │  └─ testimoni
+│  │  │     └─ page.tsx
+│  │  ├─ animation.css
+│  │  ├─ api
+│  │  │  ├─ articles
+│  │  │  │  ├─ featured
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ related
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ route.ts
+│  │  │  │  └─ [slug]
+│  │  │  │     └─ route.ts
+│  │  │  ├─ categories
+│  │  │  │  └─ route.ts
+│  │  │  └─ test-connection
+│  │  │     └─ route.ts
+│  │  ├─ favicon.ico
+│  │  ├─ globals.css
+│  │  ├─ layout.tsx
+│  │  ├─ lib
+│  │  │  ├─ api
+│  │  │  │  ├─ client-strapi.ts
+│  │  │  │  └─ strapi.ts
+│  │  │  ├─ performance
+│  │  │  │  └─ analytics.ts
+│  │  │  └─ utils.ts
+│  │  ├─ loading.tsx
+│  │  ├─ not-found.tsx
+│  │  ├─ page.tsx
+│  │  ├─ robots.txt
+│  │  └─ sitemap.ts
+│  ├─ components
+│  │  ├─ analytics
+│  │  │  └─ GoogleAnalytics.tsx
+│  │  ├─ layout
+│  │  │  ├─ footer
+│  │  │  │  ├─ ContactInfo.tsx
+│  │  │  │  ├─ FloatingAppointmentButton.tsx
+│  │  │  │  ├─ FooterBottom.tsx
+│  │  │  │  ├─ FooterLinkList.tsx
+│  │  │  │  ├─ FooterMain.tsx
+│  │  │  │  ├─ NewsletterForm.tsx
+│  │  │  │  ├─ public-footer.tsx
+│  │  │  │  ├─ schema.ts
+│  │  │  │  └─ SocialIcons.tsx
+│  │  │  ├─ main-layout.tsx
+│  │  │  └─ public-header.tsx
+│  │  ├─ performance
+│  │  │  └─ WebVitals.tsx
+│  │  ├─ public
+│  │  │  ├─ about
+│  │  │  │  ├─ about-us.tsx
+│  │  │  │  ├─ AboutHero.tsx
+│  │  │  │  ├─ ContactForm.tsx
+│  │  │  │  ├─ HistoryTabs.tsx
+│  │  │  │  ├─ index.ts
+│  │  │  │  ├─ LokasiKontakSection.tsx
+│  │  │  │  ├─ NavigationTabs.tsx
+│  │  │  │  ├─ NilaiPerusahaanCarousel.tsx
+│  │  │  │  └─ VisiMisiSection.tsx
+│  │  │  ├─ articles
+│  │  │  │  ├─ ArticleCard.tsx
+│  │  │  │  ├─ FilterControls.tsx
+│  │  │  │  ├─ NewsletterSection.tsx
+│  │  │  │  ├─ Pagination.tsx
+│  │  │  │  └─ SearchSection.tsx
+│  │  │  ├─ detailArticle
+│  │  │  │  ├─ ArticleContent.tsx
+│  │  │  │  ├─ BackNavigation.tsx
+│  │  │  │  ├─ BreadCrumb.tsx
+│  │  │  │  ├─ HeaderDetail.tsx
+│  │  │  │  ├─ Newsletter.tsx
+│  │  │  │  ├─ RelatedArticle.tsx
+│  │  │  │  ├─ SocialShare.tsx
+│  │  │  │  └─ TableOfContentGenerarator.tsx
+│  │  │  ├─ doctor
+│  │  │  │  └─ doctor-page.tsx
+│  │  │  ├─ facilities
+│  │  │  │  └─ facilities-page.tsx
+│  │  │  ├─ faq
+│  │  │  │  └─ FAQPage.tsx
+│  │  │  ├─ homepage
+│  │  │  │  ├─ about-us.tsx
+│  │  │  │  ├─ consultation-contact.tsx
+│  │  │  │  ├─ featured-services.tsx
+│  │  │  │  ├─ hero-banner.tsx
+│  │  │  │  ├─ newest-articles.tsx
+│  │  │  │  ├─ testimonials.tsx
+│  │  │  │  └─ video-section.tsx
+│  │  │  ├─ services
+│  │  │  │  ├─ consultation.tsx
+│  │  │  │  ├─ edukasi.tsx
+│  │  │  │  ├─ farmasi.tsx
+│  │  │  │  ├─ igd-rawat-inap.tsx
+│  │  │  │  ├─ komplementer.tsx
+│  │  │  │  └─ laboratorium.tsx
+│  │  │  └─ testimoni
+│  │  │     └─ testimonials-page.tsx
+│  │  └─ ui
+│  │     ├─ button.tsx
+│  │     ├─ consultation-home.tsx
+│  │     ├─ cta.tsx
+│  │     ├─ modal-konsultasi.tsx
+│  │     └─ skeleton.tsx
+│  ├─ data
+│  │  ├─ consultationData.ts
+│  │  ├─ faqData.ts
+│  │  ├─ fasilitasData.ts
+│  │  ├─ heroData.ts
+│  │  ├─ services.ts
+│  │  └─ testimonials.ts
+│  ├─ hooks
+│  ├─ types
+│  │  ├─ article.ts
+│  │  └─ global.d.ts
+│  └─ utils
+│     └─ articleUtils.ts
+└─ tsconfig.json
+
+```
+>>>>>>> e05ca2ec2a9394637981025fca0f9ad22cfd9de7
