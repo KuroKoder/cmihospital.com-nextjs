@@ -1,4 +1,3 @@
-
 ```
 cmihospital.com
 ├─ eslint.config.mjs
@@ -12,7 +11,8 @@ cmihospital.com
 │  ├─ images
 │  │  ├─ about
 │  │  │  ├─ cmi.webp
-│  │  │  └─ cmigedung.png
+│  │  │  ├─ cmigedung.png
+│  │  │  └─ grsetra.png
 │  │  ├─ articles
 │  │  │  ├─ articlepage
 │  │  │  │  ├─ deteksi-kanker.png
@@ -46,10 +46,8 @@ cmihospital.com
 │  │  │  │  ├─ pengobatan-penyakit-ringan.png
 │  │  │  │  └─ vaksinasi.png
 │  │  │  ├─ inpatient
-│  │  │  │  ├─ kamar-rawat-inap-nyaman.png
-│  │  │  │  ├─ perawatan-24-jam.png
-│  │  │  │  ├─ program-rehabilitasi.png
-│  │  │  │  └─ ruang-keluarga.png
+│  │  │  │  ├─ kamar-rawat-inap-nyaman.JPG
+│  │  │  │  └─ perawatan-24-jam.png
 │  │  │  └─ laboratory
 │  │  │     ├─ pemeriksaan-darah-lengkap.png
 │  │  │     ├─ tes-fungsi-organ.png
@@ -57,27 +55,40 @@ cmihospital.com
 │  │  │     └─ tes-hormon.png
 │  │  ├─ hero
 │  │  │  ├─ cmi.webp
-│  │  │  └─ Gedungcmi.jpg
+│  │  │  ├─ Gedungcmi.jpg
+│  │  │  ├─ Hero-2.webp
+│  │  │  └─ HERO-3.webp
 │  │  ├─ logo
 │  │  │  └─ logo.svg
 │  │  ├─ services
+│  │  │  ├─ diabetes.png
 │  │  │  ├─ diabetes.svg
+│  │  │  ├─ diabetes1.svg
+│  │  │  ├─ ginjal.png
 │  │  │  ├─ ginjal.svg
+│  │  │  ├─ ginjal1.svg
 │  │  │  ├─ jantung.svg
+│  │  │  ├─ jantung1.svg
 │  │  │  ├─ kanker.jpg
+│  │  │  ├─ kanker.png
 │  │  │  ├─ kanker.svg
+│  │  │  ├─ kanker1.svg
 │  │  │  └─ laboratorium.webp
 │  │  └─ testimonials
 │  │     ├─ elis.jpg
+│  │     ├─ elis.webp
 │  │     ├─ erry.jpg
 │  │     ├─ eulis.jpg
+│  │     ├─ eulis.webp
 │  │     ├─ ida-rusida.jpg
 │  │     ├─ mustofa.jpg
+│  │     ├─ mustofa.webp
 │  │     ├─ nendra.jpg
 │  │     ├─ riyah.jpg
 │  │     └─ triana.jpg
 │  ├─ kidney.png
 │  ├─ next.svg
+│  ├─ site.webmanifest
 │  ├─ vercel.svg
 │  └─ window.svg
 ├─ README.md
@@ -96,28 +107,34 @@ cmihospital.com
 │  │  │  │  └─ page.tsx
 │  │  │  ├─ kontak
 │  │  │  │  └─ page.tsx
-│  │  │  ├─ layanan
-│  │  │  │  ├─ farmasi
-│  │  │  │  │  └─ page.tsx
-│  │  │  │  ├─ follow-up
-│  │  │  │  │  └─ page.tsx
-│  │  │  │  ├─ igd-rawat-inap
-│  │  │  │  │  └─ page.tsx
-│  │  │  │  ├─ konsultasi-dokter
-│  │  │  │  │  └─ page.tsx
-│  │  │  │  ├─ laboratorium
-│  │  │  │  │  └─ page.tsx
-│  │  │  │  └─ poli-komplementer
-│  │  │  │     └─ page.tsx
-│  │  │  ├─ page.tsx
 │  │  │  ├─ tentang-kami
 │  │  │  │  └─ page.tsx
 │  │  │  └─ testimoni
 │  │  │     └─ page.tsx
 │  │  ├─ animation.css
+│  │  ├─ api
+│  │  │  ├─ articles
+│  │  │  │  ├─ featured
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ related
+│  │  │  │  │  └─ route.ts
+│  │  │  │  ├─ route.ts
+│  │  │  │  └─ [slug]
+│  │  │  │     └─ route.ts
+│  │  │  ├─ categories
+│  │  │  │  └─ route.ts
+│  │  │  └─ test-connection
+│  │  │     └─ route.ts
 │  │  ├─ favicon.ico
 │  │  ├─ globals.css
 │  │  ├─ layout.tsx
+│  │  ├─ lib
+│  │  │  ├─ api
+│  │  │  │  ├─ client-strapi.ts
+│  │  │  │  └─ strapi.ts
+│  │  │  ├─ performance
+│  │  │  │  └─ analytics.ts
+│  │  │  └─ utils.ts
 │  │  ├─ loading.tsx
 │  │  ├─ not-found.tsx
 │  │  ├─ page.tsx
@@ -204,12 +221,6 @@ cmihospital.com
 │  │  ├─ services.ts
 │  │  └─ testimonials.ts
 │  ├─ hooks
-│  ├─ lib
-│  │  ├─ api
-│  │  │  └─ strapi.ts
-│  │  ├─ performance
-│  │  │  └─ analytics.ts
-│  │  └─ utils.ts
 │  ├─ types
 │  │  ├─ article.ts
 │  │  └─ global.d.ts
